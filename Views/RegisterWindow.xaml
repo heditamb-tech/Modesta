@@ -1,0 +1,51 @@
+﻿<Window x:Class="Modesta.Views.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Modesta — Registreren" Height="600" Width="420"
+        WindowStartupLocation="CenterScreen"
+        Background="#FAF6F0">
+    <Grid>
+        <Border Background="#FDFAF6" BorderBrush="#E0D5C5" BorderThickness="1"
+                CornerRadius="16" Padding="36" Width="360"
+                VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel>
+                <TextBlock Text="Modesta" FontSize="24" FontFamily="Georgia"
+                           Foreground="#5C4A32" HorizontalAlignment="Center"
+                           FontStyle="Italic" Margin="0,0,0,4"/>
+                <TextBlock Text="Your Modesty. Your Choice." FontSize="12"
+                           Foreground="#7A6B5A" HorizontalAlignment="Center"
+                           FontStyle="Italic" Margin="0,0,0,24"/>
+
+                <TextBlock Text="Gebruikersnaam" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+                <TextBox x:Name="UsernameBox" Height="40" Padding="10,8"
+                         Background="#F5EFE6" BorderBrush="#E0D5C5"
+                         BorderThickness="1" Margin="0,0,0,12"/>
+
+                <TextBlock Text="E-mailadres" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+                <TextBox x:Name="EmailBox" Height="40" Padding="10,8"
+                         Background="#F5EFE6" BorderBrush="#E0D5C5"
+                         BorderThickness="1" Margin="0,0,0,12"/>
+
+                <TextBlock Text="Wachtwoord" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+                <PasswordBox x:Name="PasswordBox" Height="40" Padding="10,8"
+                             Background="#F5EFE6" BorderBrush="#E0D5C5"
+                             BorderThickness="1" Margin="0,0,0,12"/>
+
+                <TextBlock Text="Bevestig wachtwoord" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+                <PasswordBox x:Name="ConfirmPasswordBox" Height="40" Padding="10,8"
+                             Background="#F5EFE6" BorderBrush="#E0D5C5"
+                             BorderThickness="1" Margin="0,0,0,20"/>
+
+                <Button x:Name="RegisterBtn" Content="Account aanmaken" Height="42"
+                        Background="#8B6F47" Foreground="White"
+                        BorderThickness="0" FontSize="13"
+                        Cursor="Hand" Click="RegisterBtn_Click" Margin="0,0,0,8"/>
+
+                <Button x:Name="BackBtn" Content="Al een account? Inloggen"
+                        Height="42" Background="Transparent" Foreground="#8B6F47"
+                        BorderBrush="#8B6F47" BorderThickness="1" FontSize="13"
+                        Cursor="Hand" Click="BackBtn_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
