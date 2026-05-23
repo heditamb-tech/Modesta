@@ -15,10 +15,14 @@ namespace Modesta.Views
 
         private void Feed_Click(object sender, RoutedEventArgs e)
         {
+            var feed = new FeedWindow(CurrentUser);
+            feed.Show();
         }
 
         private void Post_Click(object sender, RoutedEventArgs e)
         {
+            var post = new PostWindow(CurrentUser);
+            post.Show();
         }
 
         private void Closet_Click(object sender, RoutedEventArgs e)
@@ -26,6 +30,7 @@ namespace Modesta.Views
             var closet = new ClosetWindow(CurrentUser);
             closet.Show();
         }
+       
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {

@@ -24,6 +24,9 @@
     <Compile Update="Services\ClosetService.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
+    <Compile Update="Services\PostService.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
   </ItemGroup>
 
 </Project>
