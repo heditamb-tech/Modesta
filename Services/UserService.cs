@@ -1,63 +1,112 @@
-﻿using BC = BCrypt.Net.BCrypt;
-using Modesta.Data;
-using Modesta.Models;
-using System;
+﻿using System;
 using System.Linq;
+using System.Windows;
+using BC = BCrypt.Net.BCrypt;
+using Modesta.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Modesta.Services
 {
     public class UserService
     {
-        private readonly ModestDbContext _db;
+        private static string _connString = @"Data Source=C:\Users\Heidi\modesta.db";
 
-        public UserService()
+        private Modesta.Data.ModestDbContext GetDb()
         {
-            _db = new ModestDbContext();
+            var options = new DbContextOptionsBuilder<Modesta.Data.ModestDbContext>()
+                .UseSqlite(_connString)
+                .Options;
+            return new Modesta.Data.ModestDbContext(options);
         }
 
         public bool Register(string username, string email, string password)
         {
-            if (_db.Users.Any(u => u.Email == email))
-                return false;
-
-            var user = new User
+            try
             {
-                Username = username,
-                Email = email.Trim().ToLower(),
-                PasswordHash = BC.HashPassword(password),
-                CreatedAt = DateTime.Now
-            };
-
-            _db.Users.Add(user);
-            _db.SaveChanges();
-
-            return true;
+                using (var db = GetDb())
+                {
+                    MessageBox.Show("DB pad: " + _connString);
+                    if (db.Users.Any(u => u.Email == email))
+                    {
+                        MessageBox.Show("Email al in gebruik");
+                        return false;
+                    }
+                    var user = new User
+                    {
+                        Username = username,
+                        Email = email,
+                        PasswordHash = BC.HashPassword(password),
+                        CreatedAt = DateTime.Now
+                    };
+                    db.Users.Add(user);
+                    db.SaveChanges();
+                    MessageBox.Show($"Geregistreerd! Users: {db.Users.Count()}");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Fout: " + ex.Message + "\n" + ex.InnerException?.Message);
+                return false;
+            }
         }
 
         public User Login(string email, string password)
         {
-            email = email.Trim().ToLower();
-
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            System.Diagnostics.Debug.WriteLine($"INPUT EMAIL: {email}");
-
-            if (user == null)
+            try
             {
-                System.Diagnostics.Debug.WriteLine("USER NOT FOUND");
+                using (var db = GetDb())
+                {
+                    MessageBox.Show($"Users in DB: {db.Users.Count()}");
+                    var user = db.Users.FirstOrDefault(u => u.Email == email);
+                    if (user == null) return null;
+                    if (!BC.Verify(password, user.PasswordHash)) return null;
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Login fout: " + ex.Message);
                 return null;
             }
+        }
 
-            System.Diagnostics.Debug.WriteLine($"FOUND USER: {user.Email}");
+        public bool ChangePassword(int userId, string newPassword)
+        {
+            using (var db = GetDb())
+            {
+                var user = db.Users.Find(userId);
+                if (user == null) return false;
+                user.PasswordHash = BC.HashPassword(newPassword);
+                db.SaveChanges();
+                return true;
+            }
+        }
 
-            bool pwOk = BC.Verify(password, user.PasswordHash);
+        public bool DeleteAccount(int userId)
+        {
+            using (var db = GetDb())
+            {
+                var user = db.Users.Find(userId);
+                if (user == null) return false;
+                db.Users.Remove(user);
+                db.SaveChanges();
+                return true;
+            }
+        }
 
-            System.Diagnostics.Debug.WriteLine($"PASSWORD OK: {pwOk}");
-
-            if (!pwOk)
-                return null;
-
-            return user;
+        public bool UpdateProfile(int userId, string bio, string picturePath, string username)
+        {
+            using (var db = GetDb())
+            {
+                var user = db.Users.Find(userId);
+                if (user == null) return false;
+                if (bio != null) user.Bio = bio;
+                if (picturePath != null) user.ProfilePicturePath = picturePath;
+                if (username != null) user.Username = username;
+                db.SaveChanges();
+                return true;
+            }
         }
     }
 }

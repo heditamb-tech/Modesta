@@ -5,13 +5,39 @@ namespace Modesta.Views
 {
     public partial class MainAppWindow : Window
     {
-        private User _currentUser;
+        public User CurrentUser { get; private set; }
 
         public MainAppWindow(User user)
         {
             InitializeComponent();
-            _currentUser = user;
-            WelcomeText.Text = $"Welkom, @{user.Username}!";
+            CurrentUser = user;
+        }
+
+        private void Feed_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void Post_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void Closet_Click(object sender, RoutedEventArgs e)
+        {
+            var closet = new ClosetWindow(CurrentUser);
+            closet.Show();
+        }
+
+        private void Profile_Click(object sender, RoutedEventArgs e)
+        {
+            var profile = new ProfileWindow(CurrentUser);
+            profile.Show();
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            var login = new LoginWindow();
+            login.Show();
+            this.Close();
         }
     }
 }

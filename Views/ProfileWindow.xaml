@@ -1,0 +1,51 @@
+﻿<Window x:Class="Modesta.Views.ProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Modesta — Profiel" Height="600" Width="500"
+        WindowStartupLocation="CenterScreen"
+        Background="#FAF6F0">
+    <Grid Margin="30">
+        <StackPanel>
+            <TextBlock Text="Mijn Profiel" FontSize="22" FontFamily="Georgia"
+                       Foreground="#5C4A32" FontStyle="Italic" Margin="0,0,0,20"/>
+
+            <TextBlock Text="Profielfoto" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <Image x:Name="ProfilePicture" Width="80" Height="80"
+                       Stretch="UniformToFill" Margin="0,0,12,0"/>
+                <Button Content="Foto uploaden" Height="36" Padding="16,0"
+                        Background="#F5EFE6" Foreground="#5C4A32"
+                        BorderBrush="#E0D5C5" BorderThickness="1"
+                        Cursor="Hand" Click="UploadPhoto_Click"
+                        VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <TextBlock Text="Gebruikersnaam" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+            <TextBox x:Name="UsernameBox" Height="40" Padding="10,8"
+                     Background="#F5EFE6" BorderBrush="#E0D5C5"
+                     BorderThickness="1" Margin="0,0,0,12"/>
+
+            <TextBlock Text="Biografie" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+            <TextBox x:Name="BioBox" Height="80" Padding="10,8"
+                     Background="#F5EFE6" BorderBrush="#E0D5C5"
+                     BorderThickness="1" TextWrapping="Wrap"
+                     AcceptsReturn="True" Margin="0,0,0,12"/>
+
+            <TextBlock Text="Nieuw wachtwoord (leeg laten om niet te wijzigen)"
+                       Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
+            <PasswordBox x:Name="NewPasswordBox" Height="40" Padding="10,8"
+                         Background="#F5EFE6" BorderBrush="#E0D5C5"
+                         BorderThickness="1" Margin="0,0,0,20"/>
+
+            <Button Content="Wijzigingen opslaan" Height="42"
+                    Background="#8B6F47" Foreground="White"
+                    BorderThickness="0" FontSize="13"
+                    Cursor="Hand" Click="SaveProfile_Click" Margin="0,0,0,8"/>
+
+            <Button Content="Account verwijderen" Height="42"
+                    Background="Transparent" Foreground="#C0392B"
+                    BorderBrush="#C0392B" BorderThickness="1" FontSize="13"
+                    Cursor="Hand" Click="DeleteAccount_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

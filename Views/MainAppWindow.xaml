@@ -5,12 +5,41 @@
         WindowStartupLocation="CenterScreen"
         Background="#FAF6F0">
     <Grid>
-        <TextBlock x:Name="WelcomeText"
-                   FontSize="24" FontFamily="Georgia"
-                   Foreground="#5C4A32" FontStyle="Italic"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#FDFAF6"
+                BorderBrush="#E0D5C5" BorderThickness="0,0,1,0">
+            <StackPanel Margin="16">
+                <TextBlock Text="Modesta" FontSize="20" FontFamily="Georgia"
+                           Foreground="#5C4A32" FontStyle="Italic"
+                           Margin="0,16,0,32"/>
+                <Button Content="Feed" Height="44" Margin="0,0,0,4"
+                        Background="#F5EFE6" Foreground="#5C4A32"
+                        BorderThickness="0" HorizontalContentAlignment="Left"
+                        Padding="12,0" Cursor="Hand" Click="Feed_Click"/>
+                <Button Content="Post plaatsen" Height="44" Margin="0,0,0,4"
+                        Background="Transparent" Foreground="#7A6B5A"
+                        BorderThickness="0" HorizontalContentAlignment="Left"
+                        Padding="12,0" Cursor="Hand" Click="Post_Click"/>
+                <Button Content="Kledingkast" Height="44" Margin="0,0,0,4"
+                        Background="Transparent" Foreground="#7A6B5A"
+                        BorderThickness="0" HorizontalContentAlignment="Left"
+                        Padding="12,0" Cursor="Hand" Click="Closet_Click"/>
+                <Button Content="Profiel" Height="44" Margin="0,0,0,4"
+                        Background="Transparent" Foreground="#7A6B5A"
+                        BorderThickness="0" HorizontalContentAlignment="Left"
+                        Padding="12,0" Cursor="Hand" Click="Profile_Click"/>
+                <Button Content="Uitloggen" Height="44" Margin="0,40,0,0"
+                        Background="Transparent" Foreground="#C0392B"
+                        BorderThickness="0" HorizontalContentAlignment="Left"
+                        Padding="12,0" Cursor="Hand" Click="Logout_Click"/>
+            </StackPanel>
+        </Border>
+
+        <Frame x:Name="MainFrame" Grid.Column="1"
+               NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>
-    
-    
