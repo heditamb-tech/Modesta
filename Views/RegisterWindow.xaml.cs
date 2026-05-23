@@ -36,7 +36,7 @@ namespace Modesta.Views
                 MessageBox.Show("Account aangemaakt! Je kan nu inloggen.", "Gelukt");
                 var login = new LoginWindow();
                 login.Show();
-                this.Close();
+                this.Hide();
             }
             else
             {
@@ -48,7 +48,7 @@ namespace Modesta.Views
         {
             var login = new LoginWindow();
             login.Show();
-            this.Close();
+            this.Hide();
         }
     }
 }

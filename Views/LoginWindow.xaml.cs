@@ -1,9 +1,6 @@
 ﻿using Modesta.Services;
-using System;
-
-
-using Modesta.Services;
 using System.Windows;
+using System;
 
 namespace Modesta.Views
 {
@@ -18,21 +15,35 @@ namespace Modesta.Views
 
         private void LoginBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(EmailBox.Text) || string.IsNullOrEmpty(PasswordBox.Password))
+            try
             {
-                MessageBox.Show("Vul alle velden in.", "Fout");
-                return;
+                if (string.IsNullOrEmpty(EmailBox.Text) ||
+                    string.IsNullOrEmpty(PasswordBox.Password))
+                {
+                    MessageBox.Show("Vul alle velden in.", "Fout");
+                    return;
+                }
+                var user = _userService.Login(EmailBox.Text, PasswordBox.Password);
+                if (user != null)
+                {
+                    MainAppWindow main = new MainAppWindow(user);
+                    Application.Current.MainWindow = main;
+                    main.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    this.Activate();
+                    MessageBox.Show("Ongeldig e-mailadres of wachtwoord.", "Fout",
+                                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                    PasswordBox.Clear();
+                    PasswordBox.Focus();
+                }
             }
-            var user = _userService.Login(EmailBox.Text, PasswordBox.Password);
-            if (user != null)
+            catch (Exception ex)
             {
-                var main = new MainAppWindow(user);
-                main.Show();
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Ongeldig e-mailadres of wachtwoord.", "Fout");
+                MessageBox.Show("FOUT: " + ex.Message + "\n\n" + ex.InnerException?.Message,
+                                "Debug fout");
             }
         }
 

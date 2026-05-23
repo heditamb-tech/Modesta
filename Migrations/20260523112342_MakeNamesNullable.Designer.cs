@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Modesta.Data;
 
@@ -10,9 +11,11 @@ using Modesta.Data;
 namespace Modesta.Migrations
 {
     [DbContext(typeof(ModestDbContext))]
-    partial class ModestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260523112342_MakeNamesNullable")]
+    partial class MakeNamesNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
@@ -24,24 +27,29 @@ namespace Modesta.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Brand")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Category")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CollectionId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Color")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhotoPath")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
@@ -70,6 +78,7 @@ namespace Modesta.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
@@ -87,6 +96,7 @@ namespace Modesta.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
@@ -123,6 +133,7 @@ namespace Modesta.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("FollowId");
@@ -137,24 +148,30 @@ namespace Modesta.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Brand")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ItemType")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OnlineLink")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("PostId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ProductPhotoPath")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ShopAddress")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ShopName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("TagId");
@@ -171,15 +188,18 @@ namespace Modesta.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Caption")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PrivacySetting")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
@@ -205,12 +225,14 @@ namespace Modesta.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Reason")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ReporterId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ReportId");
@@ -227,12 +249,14 @@ namespace Modesta.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Bio")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
@@ -245,18 +269,23 @@ namespace Modesta.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PrivacySetting")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProfilePicturePath")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UITheme")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Username")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("UserId");
