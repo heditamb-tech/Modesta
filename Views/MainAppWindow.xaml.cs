@@ -37,6 +37,19 @@ namespace Modesta.Views
             var profile = new ProfileWindow(CurrentUser);
             profile.Show();
         }
+        private void Admin_Click(object sender, RoutedEventArgs e)
+        {
+            
+            if (CurrentUser.IsAdmin)
+            {
+                var admin = new AdminWindow();
+                admin.Show();
+            }
+            else
+            {
+                MessageBox.Show("Geen toegang.");
+            }
+        }
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {

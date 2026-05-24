@@ -25,7 +25,7 @@ namespace Modesta.Services
             {
                 using (var db = GetDb())
                 {
-                    MessageBox.Show("DB pad: " + _connString);
+                    
                     if (db.Users.Any(u => u.Email == email))
                     {
                         MessageBox.Show("Email al in gebruik");
@@ -38,9 +38,12 @@ namespace Modesta.Services
                         PasswordHash = BC.HashPassword(password),
                         CreatedAt = DateTime.Now
                     };
+
+                    if (!db.Users.Any()) user.IsAdmin = true;
+
                     db.Users.Add(user);
                     db.SaveChanges();
-                    MessageBox.Show($"Geregistreerd! Users: {db.Users.Count()}");
+                   
                     return true;
                 }
             }
@@ -57,8 +60,14 @@ namespace Modesta.Services
             {
                 using (var db = GetDb())
                 {
-                    MessageBox.Show($"Users in DB: {db.Users.Count()}");
+                    
                     var user = db.Users.FirstOrDefault(u => u.Email == email);
+                    // Tijdelijk: maak eerste user admin
+                    if (user != null && user.UserId == 1)
+                    {
+                        user.IsAdmin = true;
+                        db.SaveChanges();
+                    }
                     if (user == null) return null;
                     if (!BC.Verify(password, user.PasswordHash)) return null;
                     return user;

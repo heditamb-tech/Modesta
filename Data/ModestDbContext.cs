@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Modesta.Models;
+using BCrypt.Net;
 
 namespace Modesta.Data
 {
@@ -25,6 +26,20 @@ namespace Modesta.Data
             {
                 options.UseSqlite(@"Data Source=C:\Users\Heidi\modesta.db");
             }
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                UserId = 1,
+                Username = "admin",
+                Email = "admin@modesta.be",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                IsAdmin = true,
+                PrivacySetting = "private",
+                UITheme = "beige",
+                CreatedAt = System.DateTime.Now
+            });
         }
     }
 }
