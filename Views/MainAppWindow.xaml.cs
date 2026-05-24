@@ -30,7 +30,12 @@ namespace Modesta.Views
             var closet = new ClosetWindow(CurrentUser);
             closet.Show();
         }
-       
+
+        private void AI_Click(object sender, RoutedEventArgs e)
+        {
+            var ai = new AIWindow(CurrentUser);
+            ai.Show();
+        }
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
