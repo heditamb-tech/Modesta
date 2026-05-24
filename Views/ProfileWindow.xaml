@@ -12,7 +12,7 @@
             <TextBlock Text="Profielfoto" Foreground="#7A6B5A" FontSize="12" Margin="0,0,0,4"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                 <Image x:Name="ProfilePicture" Width="80" Height="80"
-                       Stretch="UniformToFill" Margin="0,0,12,0"/>
+                       Stretch="Uniform" Margin="0,0,12,0"/>
                 <Button Content="Foto uploaden" Height="36" Padding="16,0"
                         Background="#F5EFE6" Foreground="#5C4A32"
                         BorderBrush="#E0D5C5" BorderThickness="1"

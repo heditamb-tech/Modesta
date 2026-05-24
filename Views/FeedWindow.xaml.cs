@@ -66,7 +66,7 @@ namespace Modesta.Views
                 var img = new System.Windows.Controls.Image
                 {
                     Height = 300,
-                    Stretch = System.Windows.Media.Stretch.UniformToFill
+                    Stretch = System.Windows.Media.Stretch.Uniform
                 };
                 img.Source = new BitmapImage(new Uri(post.ImageUrl));
                 stack.Children.Add(img);
@@ -87,19 +87,45 @@ namespace Modesta.Views
 
             if (post.ItemTags != null)
             {
+                var tagsPanel = new WrapPanel { Margin = new Thickness(0, 4, 0, 0) };
+
                 foreach (var tag in post.ItemTags)
                 {
-                    var tagText = new TextBlock
+                    var tagBorder = new Border
+                    {
+                        Background = new System.Windows.Media.SolidColorBrush(
+                            (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                            .ConvertFromString("#F5EFE6")),
+                        BorderBrush = new System.Windows.Media.SolidColorBrush(
+                            (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                            .ConvertFromString("#E0D5C5")),
+                        BorderThickness = new Thickness(1),
+                        CornerRadius = new CornerRadius(20),
+                        Padding = new Thickness(8, 4, 8, 4),
+                        Margin = new Thickness(0, 2, 4, 2),
+                        Cursor = System.Windows.Input.Cursors.Hand
+                    };
+
+                    tagBorder.Child = new TextBlock
                     {
                         Text = $"🏷️ {tag.ItemType} — {tag.Brand}",
                         FontSize = 11,
                         Foreground = new System.Windows.Media.SolidColorBrush(
                             (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                            .ConvertFromString("#8B6F47")),
-                        Margin = new Thickness(0, 2, 0, 2)
+                            .ConvertFromString("#8B6F47"))
                     };
-                    bodyPanel.Children.Add(tagText);
+
+                    var capturedTag = tag;
+                    tagBorder.MouseLeftButtonUp += (s, e) =>
+                    {
+                        var tagInfo = new TagInfoWindow(capturedTag, _currentUser);
+                        tagInfo.Show();
+                    };
+
+                    tagsPanel.Children.Add(tagBorder);
                 }
+
+                bodyPanel.Children.Add(tagsPanel);
             }
 
             stack.Children.Add(bodyPanel);

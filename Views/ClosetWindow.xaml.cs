@@ -3,6 +3,7 @@ using Modesta.Models;
 using Modesta.Services;
 using System.IO;
 using System.Windows;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -29,10 +30,13 @@ namespace Modesta.Views
             CollectionCombo.SelectedValuePath = "CollectionId";
         }
 
-        private void LoadItems()
+        private void LoadItems(int? collectionId = null)
         {
             ItemsPanel.Children.Clear();
-            var items = _closetService.GetItems(_currentUser.UserId);
+            var items = collectionId.HasValue
+                ? _closetService.GetItems(_currentUser.UserId)
+                    .Where(i => i.CollectionId == collectionId.Value).ToList()
+                : _closetService.GetItems(_currentUser.UserId);
 
             foreach (var item in items)
             {
@@ -63,7 +67,7 @@ namespace Modesta.Views
                 var img = new System.Windows.Controls.Image
                 {
                     Height = 120,
-                    Stretch = System.Windows.Media.Stretch.UniformToFill
+                    Stretch = System.Windows.Media.Stretch.Uniform
                 };
                 img.Source = new BitmapImage(new System.Uri(item.PhotoPath));
                 stack.Children.Add(img);
@@ -107,7 +111,10 @@ namespace Modesta.Views
 
         private void CollectionCombo_Changed(object sender, SelectionChangedEventArgs e)
         {
-            LoadItems();
+            if (CollectionCombo.SelectedValue != null)
+                LoadItems((int)CollectionCombo.SelectedValue);
+            else
+                LoadItems();
         }
 
         private void AddCollection_Click(object sender, RoutedEventArgs e)

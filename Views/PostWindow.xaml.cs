@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Modesta.Views
@@ -66,16 +67,72 @@ namespace Modesta.Views
                 };
                 _tags.Add(tag);
 
-                var tb = new System.Windows.Controls.TextBlock
+                var tagPanel = new Grid();
+                tagPanel.ColumnDefinitions.Add(new ColumnDefinition
+                { Width = new GridLength(1, GridUnitType.Star) });
+                tagPanel.ColumnDefinitions.Add(new ColumnDefinition
+                { Width = GridLength.Auto });
+
+                var tagText = new TextBlock
                 {
                     Text = $"✓ {itemType} — {brand}",
                     FontSize = 12,
                     Foreground = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                         .ConvertFromString("#5C4A32")),
-                    Margin = new Thickness(0, 0, 0, 4)
+                    VerticalAlignment = VerticalAlignment.Center
                 };
-                TagsList.Items.Add(tb);
+                Grid.SetColumn(tagText, 0);
+
+                var editBtn = new Button
+                {
+                    Content = "Bewerk",
+                    FontSize = 10,
+                    Padding = new Thickness(8, 4, 8, 4),
+                    Background = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#F5EFE6")),
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#5C4A32")),
+                    BorderBrush = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#E0D5C5")),
+                    BorderThickness = new Thickness(1),
+                    Cursor = System.Windows.Input.Cursors.Hand
+                };
+
+                var capturedTag = tag;
+                var capturedText = tagText;
+                editBtn.Click += (s, ev) =>
+                {
+                    var newType = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Type item:", "Bewerk tag", capturedTag.ItemType);
+                    var newBrand = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Merk:", "Bewerk tag", capturedTag.Brand);
+                    var newLink = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Online link:", "Bewerk tag", capturedTag.OnlineLink);
+                    var newShop = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Winkelnaam:", "Bewerk tag", capturedTag.ShopName);
+                    var newAddress = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Winkeladres:", "Bewerk tag", capturedTag.ShopAddress);
+
+                    if (!string.IsNullOrEmpty(newType))
+                    {
+                        capturedTag.ItemType = newType;
+                        capturedTag.Brand = newBrand;
+                        capturedTag.OnlineLink = newLink;
+                        capturedTag.ShopName = newShop;
+                        capturedTag.ShopAddress = newAddress;
+                        capturedText.Text = $"✓ {newType} — {newBrand}";
+                    }
+                };
+                Grid.SetColumn(editBtn, 1);
+
+                tagPanel.Children.Add(tagText);
+                tagPanel.Children.Add(editBtn);
+                tagPanel.Margin = new Thickness(0, 0, 0, 4);
+                TagsList.Items.Add(tagPanel);
             }
         }
 
