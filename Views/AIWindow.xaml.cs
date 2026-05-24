@@ -2,6 +2,7 @@
 using Modesta.Services;
 using System.Windows;
 using System.Windows.Controls;
+using System;
 
 namespace Modesta.Views
 {
@@ -25,11 +26,17 @@ namespace Modesta.Views
 
             AddMessage(question, isUser: true);
 
-            var response = await _aiService.GetOutfitSuggestion(
-                _currentUser.UserId, question);
-
-            AddMessage(response, isUser: false);
-            ChatScroll.ScrollToBottom();
+            try
+            {
+                var response = await _aiService.GetOutfitSuggestion(
+                    _currentUser.UserId, question);
+                AddMessage(response, isUser: false);
+                ChatScroll.ScrollToBottom();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("AI fout: " + ex.Message + "\n" + ex.InnerException?.Message);
+            }
         }
 
         private void AddMessage(string text, bool isUser)

@@ -13,7 +13,7 @@ namespace Modesta.Services
     public class AIService
     {
         private static string _connString = @"Data Source=C:\Users\Heidi\modesta.db";
-        private static string _apiKey = "jouw-openai-api-key-hier";
+        private static string _apiKey = "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";
         private readonly HttpClient _httpClient = new HttpClient();
 
         private Modesta.Data.ModestDbContext GetDb()
@@ -44,7 +44,7 @@ namespace Modesta.Services
 
                 var requestBody = new
                 {
-                    model = "gpt-3.5-turbo",
+                    model = "llama-3.3-70b-versatile",
                     messages = new[]
                     {
                         new { role = "user", content = prompt }
@@ -60,7 +60,7 @@ namespace Modesta.Services
                     "Authorization", $"Bearer {_apiKey}");
 
                 var response = await _httpClient.PostAsync(
-                    "https://api.openai.com/v1/chat/completions", content);
+                "https://api.groq.com/openai/v1/chat/completions", content);
                 var responseJson = await response.Content.ReadAsStringAsync();
 
                 using var doc = JsonDocument.Parse(responseJson);
@@ -71,5 +71,6 @@ namespace Modesta.Services
                     .GetString();
             }
         }
+
     }
 }
