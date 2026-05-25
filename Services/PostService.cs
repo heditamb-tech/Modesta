@@ -72,6 +72,21 @@ namespace Modesta.Services
             }
         }
 
+        public List<Post> Search(string query)
+        {
+            using (var db = GetDb())
+            {
+                return db.Posts
+                    .Where(p => p.Caption.Contains(query) ||
+                        p.ItemTags.Any(t => t.Brand.Contains(query) ||
+                                            t.ItemType.Contains(query)) ||
+                        p.User.Username.Contains(query))
+                    .Include(p => p.User)
+                    .Include(p => p.ItemTags)
+                    .ToList();
+            }
+        }
+
         public void ReportPost(int postId, int reporterId, string reason)
         {
             using (var db = GetDb())

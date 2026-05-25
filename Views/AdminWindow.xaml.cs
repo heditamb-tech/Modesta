@@ -1,5 +1,6 @@
 ﻿using Modesta.Models;
 using Modesta.Services;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,9 +16,45 @@ namespace Modesta.Views
             LoadStats();
         }
 
-        private void Users_Click(object sender, RoutedEventArgs e) => LoadUsers();
-        private void Reports_Click(object sender, RoutedEventArgs e) => LoadReports();
-        private void Stats_Click(object sender, RoutedEventArgs e) => LoadStats();
+        private void Users_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(sender as Button);
+            LoadUsers();
+        }
+
+        private void Reports_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(sender as Button);
+            LoadReports();
+        }
+
+        private void Stats_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(sender as Button);
+            LoadStats();
+        }
+
+        private void SetActiveButton(Button active)
+        {
+            var sidebar = active.Parent as StackPanel;
+            if (sidebar == null) return;
+            foreach (var child in sidebar.Children)
+            {
+                if (child is Button btn)
+                {
+                    btn.Background = System.Windows.Media.Brushes.Transparent;
+                    btn.Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#7A6B5A"));
+                }
+            }
+            active.Background = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                .ConvertFromString("#F5EFE6"));
+            active.Foreground = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                .ConvertFromString("#5C4A32"));
+        }
 
         private void LoadStats()
         {
@@ -25,7 +62,8 @@ namespace Modesta.Views
             ContentPanel.Children.Add(new TextBlock
             {
                 Text = "Statistieken",
-                FontSize = 18, 
+                FontSize = 18,
+                FontFamily = new System.Windows.Media.FontFamily("Georgia"),
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                     .ConvertFromString("#5C4A32")),
@@ -33,14 +71,12 @@ namespace Modesta.Views
             });
 
             var stats = new StackPanel { Orientation = Orientation.Horizontal };
-
             stats.Children.Add(CreateStatCard("Gebruikers",
                 _adminService.GetUserCount().ToString()));
             stats.Children.Add(CreateStatCard("Posts",
                 _adminService.GetPostCount().ToString()));
             stats.Children.Add(CreateStatCard("Rapporten",
                 _adminService.GetPendingReportCount().ToString()));
-
             ContentPanel.Children.Add(stats);
         }
 
@@ -95,6 +131,7 @@ namespace Modesta.Views
             {
                 Text = "Gebruikers",
                 FontSize = 18,
+                FontFamily = new System.Windows.Media.FontFamily("Georgia"),
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                     .ConvertFromString("#5C4A32")),
@@ -117,8 +154,10 @@ namespace Modesta.Views
                 };
 
                 var panel = new Grid();
-                panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                panel.ColumnDefinitions.Add(new ColumnDefinition
+                { Width = new GridLength(1, GridUnitType.Star) });
+                panel.ColumnDefinitions.Add(new ColumnDefinition
+                { Width = GridLength.Auto });
 
                 var info = new TextBlock
                 {
@@ -133,6 +172,7 @@ namespace Modesta.Views
                 var deleteBtn = new Button
                 {
                     Content = "Verwijderen",
+                    Width = 100,
                     Padding = new Thickness(12, 6, 12, 6),
                     Background = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
@@ -172,6 +212,7 @@ namespace Modesta.Views
             {
                 Text = "Gerapporteerde posts",
                 FontSize = 18,
+                FontFamily = new System.Windows.Media.FontFamily("Georgia"),
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                     .ConvertFromString("#5C4A32")),
@@ -210,25 +251,64 @@ namespace Modesta.Views
                 var panel = new Grid();
                 panel.ColumnDefinitions.Add(new ColumnDefinition
                 { Width = new GridLength(1, GridUnitType.Star) });
-                panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                panel.ColumnDefinitions.Add(new ColumnDefinition
+                { Width = GridLength.Auto });
 
                 var info = new StackPanel();
+
+                info.Children.Add(new TextBlock
+                {
+                    Text = $"Gepost door: @{report.Post?.User?.Username ?? "onbekend"}",
+                    FontSize = 13,
+                    FontWeight = FontWeights.Medium,
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#3A2E22")),
+                    Margin = new Thickness(0, 0, 0, 4)
+                });
+
                 info.Children.Add(new TextBlock
                 {
                     Text = $"Reden: {report.Reason}",
-                    FontSize = 13,
+                    FontSize = 12,
                     Foreground = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                        .ConvertFromString("#3A2E22"))
+                        .ConvertFromString("#7A6B5A")),
+                    Margin = new Thickness(0, 0, 0, 4)
                 });
+
+                if (!string.IsNullOrEmpty(report.Post?.ImageUrl) &&
+                    System.IO.File.Exists(report.Post.ImageUrl))
+                {
+                    var img = new System.Windows.Controls.Image
+                    {
+                        Height = 120,
+                        Width = 120,
+                        Stretch = System.Windows.Media.Stretch.Uniform,
+                        Margin = new Thickness(0, 4, 0, 4)
+                    };
+                    img.Source = new System.Windows.Media.Imaging.BitmapImage(
+                        new Uri(report.Post.ImageUrl));
+                    info.Children.Add(img);
+                }
+
+                info.Children.Add(new TextBlock
+                {
+                    Text = $"Gepost op: {report.Post?.CreatedAt.ToString("dd/MM/yyyy")}",
+                    FontSize = 11,
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#7A6B5A"))
+                });
+
                 Grid.SetColumn(info, 0);
 
-                var btnPanel = new StackPanel
-                { Orientation = Orientation.Horizontal };
+                var btnPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
                 var removeBtn = new Button
                 {
                     Content = "Verwijderen",
+                    Width = 100,
                     Padding = new Thickness(10, 6, 10, 6),
                     Background = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
@@ -250,6 +330,7 @@ namespace Modesta.Views
                 var ignoreBtn = new Button
                 {
                     Content = "Negeren",
+                    Width = 100,
                     Padding = new Thickness(10, 6, 10, 6),
                     Background = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter

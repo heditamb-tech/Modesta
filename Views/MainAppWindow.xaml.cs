@@ -18,6 +18,11 @@ namespace Modesta.Views
             var feed = new FeedWindow(CurrentUser);
             feed.Show();
         }
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            var search = new SearchWindow(CurrentUser);
+            search.Show();
+        }
 
         private void Post_Click(object sender, RoutedEventArgs e)
         {

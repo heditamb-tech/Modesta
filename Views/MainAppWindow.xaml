@@ -20,6 +20,10 @@
                         Background="#F5EFE6" Foreground="#5C4A32"
                         BorderThickness="0" HorizontalContentAlignment="Left"
                         Padding="12,0" Cursor="Hand" Click="Feed_Click"/>
+                <Button Content="Zoeken" Height="44" Margin="0,0,0,4"
+                        Background="Transparent" Foreground="#7A6B5A"
+                        BorderThickness="0" HorizontalContentAlignment="Left"
+                        Padding="12,0" Cursor="Hand" Click="Search_Click"/>
                 <Button Content="Post plaatsen" Height="44" Margin="0,0,0,4"
                         Background="Transparent" Foreground="#7A6B5A"
                         BorderThickness="0" HorizontalContentAlignment="Left"

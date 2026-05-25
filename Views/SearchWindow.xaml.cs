@@ -1,35 +1,36 @@
 ﻿using Modesta.Models;
 using Modesta.Services;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System;
 
 namespace Modesta.Views
 {
-    public partial class FeedWindow : Window
+    public partial class SearchWindow : Window
     {
         private User _currentUser;
         private PostService _postService = new PostService();
 
-        public FeedWindow(User user)
+        public SearchWindow(User user)
         {
             InitializeComponent();
             _currentUser = user;
-            LoadFeed();
         }
 
-        private void LoadFeed()
+        private void Search_Click(object sender, RoutedEventArgs e)
         {
-            FeedPanel.Children.Clear();
-            var posts = _postService.GetFeed(_currentUser.UserId);
+            if (string.IsNullOrEmpty(SearchBox.Text)) return;
+
+            ResultsPanel.Children.Clear();
+            var posts = _postService.Search(SearchBox.Text);
 
             if (posts.Count == 0)
             {
-                FeedPanel.Children.Add(new TextBlock
+                ResultsPanel.Children.Add(new TextBlock
                 {
-                    Text = "Nog geen posts. Volg andere gebruikers om hun posts te zien!",
+                    Text = "Geen resultaten gevonden.",
                     FontSize = 13,
                     Foreground = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
@@ -42,7 +43,7 @@ namespace Modesta.Views
             foreach (var post in posts)
             {
                 var card = CreatePostCard(post);
-                FeedPanel.Children.Add(card);
+                ResultsPanel.Children.Add(card);
             }
         }
 
@@ -80,15 +81,25 @@ namespace Modesta.Views
                 FontSize = 12,
                 FontWeight = FontWeights.Medium,
                 Foreground = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                .ConvertFromString("#8B6F47")),
-                Margin = new Thickness(0, 0, 0, 6)
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#8B6F47")),
+                Margin = new Thickness(0, 0, 0, 4)
+            });
+
+            bodyPanel.Children.Add(new TextBlock
+            {
+                Text = post.Caption,
+                FontSize = 13,
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#3A2E22")),
+                Margin = new Thickness(0, 0, 0, 8)
             });
 
             if (post.ItemTags != null)
             {
                 var tagsPanel = new WrapPanel { Margin = new Thickness(0, 4, 0, 0) };
-
                 foreach (var tag in post.ItemTags)
                 {
                     var tagBorder = new Border
@@ -116,7 +127,7 @@ namespace Modesta.Views
                     };
 
                     var capturedTag = tag;
-                    tagBorder.MouseLeftButtonUp += (s, e) =>
+                    tagBorder.MouseLeftButtonUp += (s, ev) =>
                     {
                         var tagInfo = new TagInfoWindow(capturedTag, _currentUser);
                         tagInfo.Show();
@@ -124,9 +135,9 @@ namespace Modesta.Views
 
                     tagsPanel.Children.Add(tagBorder);
                 }
-
                 bodyPanel.Children.Add(tagsPanel);
             }
+
             var reportBtn = new Button
             {
                 Content = "Rapporteer",
@@ -134,11 +145,11 @@ namespace Modesta.Views
                 Padding = new Thickness(8, 4, 8, 4),
                 Background = System.Windows.Media.Brushes.Transparent,
                 Foreground = new System.Windows.Media.SolidColorBrush(
-        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-        .ConvertFromString("#C0392B")),
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#C0392B")),
                 BorderBrush = new System.Windows.Media.SolidColorBrush(
-        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-        .ConvertFromString("#C0392B")),
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#C0392B")),
                 BorderThickness = new Thickness(1),
                 Cursor = System.Windows.Input.Cursors.Hand,
                 HorizontalAlignment = HorizontalAlignment.Right,
@@ -152,11 +163,10 @@ namespace Modesta.Views
                     "Waarom rapporteer je deze post?",
                     "Rapporteer post",
                     "Te bloot");
-
                 if (!string.IsNullOrEmpty(reason))
                 {
                     _postService.ReportPost(capturedPost.PostId, _currentUser.UserId, reason);
-                    MessageBox.Show("Post gerapporteerd. De admin zal dit bekijken.", "Bedankt");
+                    MessageBox.Show("Post gerapporteerd!", "Bedankt");
                 }
             };
 

@@ -38,6 +38,7 @@ namespace Modesta.Services
                 return db.Reports
                     .Where(r => r.Status == "pending")
                     .Include(r => r.Post)
+                    .ThenInclude(p => p.User)
                     .ToList();
         }
 
