@@ -127,7 +127,40 @@ namespace Modesta.Views
 
                 bodyPanel.Children.Add(tagsPanel);
             }
+            var reportBtn = new Button
+            {
+                Content = "Rapporteer",
+                FontSize = 10,
+                Padding = new Thickness(8, 4, 8, 4),
+                Background = System.Windows.Media.Brushes.Transparent,
+                Foreground = new System.Windows.Media.SolidColorBrush(
+        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+        .ConvertFromString("#C0392B")),
+                BorderBrush = new System.Windows.Media.SolidColorBrush(
+        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+        .ConvertFromString("#C0392B")),
+                BorderThickness = new Thickness(1),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
 
+            var capturedPost = post;
+            reportBtn.Click += (s, e) =>
+            {
+                var reason = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Waarom rapporteer je deze post?",
+                    "Rapporteer post",
+                    "Te bloot");
+
+                if (!string.IsNullOrEmpty(reason))
+                {
+                    _postService.ReportPost(capturedPost.PostId, _currentUser.UserId, reason);
+                    MessageBox.Show("Post gerapporteerd. De admin zal dit bekijken.", "Bedankt");
+                }
+            };
+
+            bodyPanel.Children.Add(reportBtn);
             stack.Children.Add(bodyPanel);
             border.Child = stack;
             return border;
