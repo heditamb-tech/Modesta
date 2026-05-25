@@ -75,7 +75,7 @@ namespace Modesta.Views
 
             var bodyPanel = new StackPanel { Margin = new Thickness(16, 12, 16, 12) };
 
-            bodyPanel.Children.Add(new TextBlock
+            var usernameBlock = new TextBlock
             {
                 Text = $"@{post.User?.Username ?? "onbekend"}",
                 FontSize = 12,
@@ -83,8 +83,22 @@ namespace Modesta.Views
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                     .ConvertFromString("#8B6F47")),
-                Margin = new Thickness(0, 0, 0, 4)
-            });
+                Margin = new Thickness(0, 0, 0, 4),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                TextDecorations = TextDecorations.Underline
+            };
+
+            var capturedUser = post.User;
+            usernameBlock.MouseLeftButtonUp += (s, ev) =>
+            {
+                if (capturedUser != null)
+                {
+                    var userProfile = new UserProfileWindow(_currentUser, capturedUser);
+                    userProfile.Show();
+                }
+            };
+
+            bodyPanel.Children.Add(usernameBlock);
 
             bodyPanel.Children.Add(new TextBlock
             {

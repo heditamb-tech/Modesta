@@ -28,6 +28,7 @@ namespace Modesta.Views
                 {
                     MainAppWindow main = new MainAppWindow(user);
                     Application.Current.MainWindow = main;
+                    ThemeService.ApplyTheme(user.UITheme ?? "beige");
                     main.Show();
                     this.Close();
                 }

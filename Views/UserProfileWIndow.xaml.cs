@@ -2,47 +2,99 @@
 using Modesta.Services;
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Modesta.Views
 {
-    public partial class FeedWindow : Window
+    public partial class UserProfileWindow : Window
     {
         private User _currentUser;
+        private User _profileUser;
         private PostService _postService = new PostService();
+        private FollowService _followService = new FollowService();
+        private bool _isFollowing = false;
 
-        public FeedWindow(User user)
+        public UserProfileWindow(User currentUser, User profileUser)
         {
             InitializeComponent();
-            _currentUser = user;
-            LoadFeed();
+            _currentUser = currentUser;
+            _profileUser = profileUser;
+            LoadProfile();
         }
 
-        private void LoadFeed()
+        private void LoadProfile()
         {
-            FeedPanel.Children.Clear();
-            var posts = _postService.GetFeed(_currentUser.UserId);
+            UsernameText.Text = $"@{_profileUser.Username}";
+            BioText.Text = _profileUser.Bio ?? "";
 
-            if (posts.Count == 0)
+            if (!string.IsNullOrEmpty(_profileUser.ProfilePicturePath) &&
+                File.Exists(_profileUser.ProfilePicturePath))
             {
-                FeedPanel.Children.Add(new TextBlock
-                {
-                    Text = "Nog geen posts. Volg andere gebruikers om hun posts te zien!",
-                    FontSize = 13,
-                    Foreground = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                        .ConvertFromString("#7A6B5A")),
-                    Margin = new Thickness(0, 20, 0, 0)
-                });
-                return;
+                ProfilePic.Source = new BitmapImage(
+                    new Uri(_profileUser.ProfilePicturePath));
             }
+
+            var posts = _postService.GetUserPosts(_profileUser.UserId);
+            var followers = _followService.GetFollowerCount(_profileUser.UserId);
+            var following = _followService.GetFollowingCount(_profileUser.UserId);
+
+            PostCountText.Text = $"{posts.Count} posts";
+            FollowerCountText.Text = $"{followers} volgers";
+            FollowingCountText.Text = $"{following} volgend";
+
+            _isFollowing = _followService.IsFollowing(
+                _currentUser.UserId, _profileUser.UserId);
+            FollowBtn.Content = _isFollowing ? "Ontvolgen" : "Volgen";
+            FollowBtn.Background = _isFollowing ?
+                new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#F5EFE6")) :
+                new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#8B6F47"));
+            FollowBtn.Foreground = _isFollowing ?
+                new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#5C4A32")) :
+                System.Windows.Media.Brushes.White;
+
+            if (_currentUser.UserId == _profileUser.UserId)
+                FollowBtn.Visibility = Visibility.Collapsed;
 
             foreach (var post in posts)
             {
                 var card = CreatePostCard(post);
-                FeedPanel.Children.Add(card);
+                PostsPanel.Children.Add(card);
+            }
+        }
+
+        private void FollowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isFollowing)
+            {
+                _followService.Unfollow(_currentUser.UserId, _profileUser.UserId);
+                _isFollowing = false;
+                FollowBtn.Content = "Volgen";
+                FollowBtn.Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#8B6F47"));
+                FollowBtn.Foreground = System.Windows.Media.Brushes.White;
+            }
+            else
+            {
+                _followService.Follow(_currentUser.UserId, _profileUser.UserId,
+                    _profileUser.PrivacySetting ?? "public");
+                _isFollowing = true;
+                FollowBtn.Content = "Ontvolgen";
+                FollowBtn.Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#F5EFE6"));
+                FollowBtn.Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#5C4A32"));
             }
         }
 
@@ -73,32 +125,6 @@ namespace Modesta.Views
             }
 
             var bodyPanel = new StackPanel { Margin = new Thickness(16, 12, 16, 12) };
-
-            var usernameBlock = new TextBlock
-            {
-                Text = $"@{post.User?.Username ?? "onbekend"}",
-                FontSize = 12,
-                FontWeight = FontWeights.Medium,
-                Foreground = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#8B6F47")),
-                Margin = new Thickness(0, 0, 0, 4),
-                Cursor = System.Windows.Input.Cursors.Hand,
-                TextDecorations = TextDecorations.Underline
-            };
-
-            var capturedUser = post.User;
-            usernameBlock.MouseLeftButtonUp += (s, ev) =>
-            {
-                if (capturedUser != null)
-                {
-                    var userProfile = new UserProfileWindow(_currentUser, capturedUser);
-                    userProfile.Show();
-                }
-            };
-
-            bodyPanel.Children.Add(usernameBlock);
-
             bodyPanel.Children.Add(new TextBlock
             {
                 Text = post.Caption,
@@ -112,8 +138,7 @@ namespace Modesta.Views
 
             if (post.ItemTags != null)
             {
-                var tagsPanel = new WrapPanel { Margin = new Thickness(0, 4, 0, 0) };
-
+                var tagsPanel = new WrapPanel();
                 foreach (var tag in post.ItemTags)
                 {
                     var tagBorder = new Border
@@ -130,7 +155,6 @@ namespace Modesta.Views
                         Margin = new Thickness(0, 2, 4, 2),
                         Cursor = System.Windows.Input.Cursors.Hand
                     };
-
                     tagBorder.Child = new TextBlock
                     {
                         Text = $"🏷️ {tag.ItemType} — {tag.Brand}",
@@ -139,53 +163,17 @@ namespace Modesta.Views
                             (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                             .ConvertFromString("#8B6F47"))
                     };
-
                     var capturedTag = tag;
-                    tagBorder.MouseLeftButtonUp += (s, e) =>
+                    tagBorder.MouseLeftButtonUp += (s, ev) =>
                     {
                         var tagInfo = new TagInfoWindow(capturedTag, _currentUser);
                         tagInfo.Show();
                     };
-
                     tagsPanel.Children.Add(tagBorder);
                 }
-
                 bodyPanel.Children.Add(tagsPanel);
             }
 
-            var reportBtn = new Button
-            {
-                Content = "Rapporteer",
-                FontSize = 10,
-                Padding = new Thickness(8, 4, 8, 4),
-                Background = System.Windows.Media.Brushes.Transparent,
-                Foreground = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#C0392B")),
-                BorderBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#C0392B")),
-                BorderThickness = new Thickness(1),
-                Cursor = System.Windows.Input.Cursors.Hand,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(0, 8, 0, 0)
-            };
-
-            var capturedPost = post;
-            reportBtn.Click += (s, e) =>
-            {
-                var reason = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Waarom rapporteer je deze post?",
-                    "Rapporteer post",
-                    "Te bloot");
-                if (!string.IsNullOrEmpty(reason))
-                {
-                    _postService.ReportPost(capturedPost.PostId, _currentUser.UserId, reason);
-                    MessageBox.Show("Post gerapporteerd!", "Bedankt");
-                }
-            };
-
-            bodyPanel.Children.Add(reportBtn);
             stack.Children.Add(bodyPanel);
             border.Child = stack;
             return border;

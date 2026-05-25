@@ -87,6 +87,18 @@ namespace Modesta.Services
             }
         }
 
+        public List<Post> GetUserPosts(int userId)
+        {
+            using (var db = GetDb())
+            {
+                return db.Posts
+                    .Where(p => p.UserId == userId)
+                    .Include(p => p.ItemTags)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToList();
+            }
+        }
+
         public void ReportPost(int postId, int reporterId, string reason)
         {
             using (var db = GetDb())
