@@ -29,11 +29,11 @@
                     BorderBrush="#E0D5C5" BorderThickness="1"
                     Cursor="Hand" Click="AddCollection_Click"
                     Margin="0,0,12,0"/>
-            <Button Content="+ Item toevoegen" Height="36" Padding="12,0"
+            <Button Content="Upload eigen item" Height="36" Padding="12,0"
                     Background="#8B6F47" Foreground="White"
                     BorderThickness="0" Cursor="Hand"
                     Click="AddItem_Click"/>
-        </StackPanel>
+            </StackPanel>
 
         <!-- Items grid -->
         <ScrollViewer Grid.Row="2">

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Win32;
 using Modesta.Models;
 using Modesta.Services;
+using System;
 using System.IO;
-using System.Windows;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -50,7 +51,7 @@ namespace Modesta.Views
             var border = new Border
             {
                 Width = 160,
-                Height = 200,
+                Height = 240,
                 Background = System.Windows.Media.Brushes.White,
                 BorderBrush = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
@@ -69,7 +70,7 @@ namespace Modesta.Views
                     Height = 120,
                     Stretch = System.Windows.Media.Stretch.Uniform
                 };
-                img.Source = new BitmapImage(new System.Uri(item.PhotoPath));
+                img.Source = new BitmapImage(new Uri(item.PhotoPath));
                 stack.Children.Add(img);
             }
             else
@@ -99,12 +100,132 @@ namespace Modesta.Views
             {
                 Text = item.Category,
                 FontSize = 10,
-                Margin = new Thickness(8, 0, 8, 4),
+                Margin = new Thickness(8, 0, 8, 6),
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                     .ConvertFromString("#7A6B5A"))
             });
 
+            // Rij 1: Bewerk + Verwijder
+            var btnPanel1 = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(8, 0, 8, 4)
+            };
+
+            var editBtn = new Button
+            {
+                Content = "Bewerk",
+                FontSize = 10,
+                Height = 28,
+                Padding = new Thickness(8, 0, 8, 0),
+                Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#F5EFE6")),
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#5C4A32")),
+                BorderBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#E0D5C5")),
+                BorderThickness = new Thickness(1),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Margin = new Thickness(0, 0, 4, 0)
+            };
+
+            var capturedItem = item;
+            editBtn.Click += (s, e) =>
+            {
+                var newName = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Nieuwe naam:", "Bewerk item", capturedItem.Name);
+                var newCategory = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Nieuwe categorie:", "Bewerk item", capturedItem.Category);
+                if (!string.IsNullOrEmpty(newName))
+                {
+                    _closetService.UpdateItem(capturedItem.ItemId, newName, newCategory);
+                    LoadItems();
+                }
+            };
+
+            var deleteBtn = new Button
+            {
+                Content = "Verwijder",
+                FontSize = 10,
+                Height = 28,
+                Padding = new Thickness(8, 0, 8, 0),
+                Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#FAECE7")),
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#712B13")),
+                BorderThickness = new Thickness(0),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            deleteBtn.Click += (s, e) =>
+            {
+                var result = MessageBox.Show(
+                    $"'{capturedItem.Name}' verwijderen?",
+                    "Bevestigen", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    _closetService.DeleteItem(capturedItem.ItemId);
+                    LoadItems();
+                }
+            };
+
+            btnPanel1.Children.Add(editBtn);
+            btnPanel1.Children.Add(deleteBtn);
+            stack.Children.Add(btnPanel1);
+
+            // Rij 2: + Collectie
+            var addToColBtn = new Button
+            {
+                Content = "+ Aan collectie toevoegen",
+                FontSize = 10,
+                Height = 28,
+                Margin = new Thickness(8, 0, 8, 8),
+                Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#F5EFE6")),
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#5C4A32")),
+                BorderBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#E0D5C5")),
+                BorderThickness = new Thickness(1),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            addToColBtn.Click += (s, e) =>
+            {
+                var collections = _closetService.GetCollections(_currentUser.UserId);
+                if (collections.Count == 0)
+                {
+                    MessageBox.Show("Maak eerst een collectie aan.", "Fout");
+                    return;
+                }
+                var colNames = string.Join("\n",
+                    collections.Select((c, i) => $"{i + 1}. {c.Name}"));
+                var input = Microsoft.VisualBasic.Interaction.InputBox(
+                    $"In welke collectie?\n\n{colNames}\n\nTyp het nummer:",
+                    "Collectie kiezen", "1");
+                if (int.TryParse(input, out int index) &&
+                    index >= 1 && index <= collections.Count)
+                {
+                    _closetService.AddItemToCollection(
+                        capturedItem.ItemId,
+                        collections[index - 1].CollectionId);
+                    MessageBox.Show(
+                        $"Item toegevoegd aan '{collections[index - 1].Name}'!",
+                        "Gelukt");
+                    LoadItems();
+                }
+            };
+
+            stack.Children.Add(addToColBtn);
             border.Child = stack;
             return border;
         }
@@ -150,12 +271,14 @@ namespace Modesta.Views
                 var category = Microsoft.VisualBasic.Interaction.InputBox(
                     "Categorie (bv. Kleding, Schoenen, Tas):", "Categorie", "");
 
-                _closetService.AddItem(
-                    _currentUser.UserId,
-                    (int)CollectionCombo.SelectedValue,
-                    nameDialog, category, "", "", dest, 0);
-
-                LoadItems();
+                if (!string.IsNullOrEmpty(nameDialog))
+                {
+                    _closetService.AddItem(
+                        _currentUser.UserId,
+                        (int)CollectionCombo.SelectedValue,
+                        nameDialog, category, "", "", dest, 0);
+                    LoadItems();
+                }
             }
         }
     }

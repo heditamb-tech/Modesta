@@ -35,6 +35,11 @@ namespace Modesta.Views
             var closet = new ClosetWindow(CurrentUser);
             closet.Show();
         }
+        private void OutfitBuilder_Click(object sender, RoutedEventArgs e)
+        {
+            var builder = new OutfitBuilderWindow(CurrentUser);
+            builder.Show();
+        }
 
         private void AI_Click(object sender, RoutedEventArgs e)
         {

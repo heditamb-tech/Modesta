@@ -2,6 +2,7 @@
 using Modesta.Services;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Modesta.Views
 {
@@ -39,9 +40,23 @@ namespace Modesta.Views
                 LinkText.Text = _tag.OnlineLink;
             else
                 LinkText.Visibility = Visibility.Collapsed;
+
+            // Laad collecties voor dropdown
+            var collections = _closetService.GetCollections(_currentUser.UserId);
+            if (collections.Count == 0)
+            {
+                // Maak automatisch "Opgeslagen items" collectie aan
+                _closetService.GetOrCreateSavedCollection(_currentUser.UserId);
+                collections = _closetService.GetCollections(_currentUser.UserId);
+            }
+            CollectionCombo.ItemsSource = collections;
+            CollectionCombo.DisplayMemberPath = "Name";
+            CollectionCombo.SelectedValuePath = "CollectionId";
+            CollectionCombo.SelectedIndex = 0;
         }
 
-        private void Link_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Link_Click(object sender,
+            System.Windows.Input.MouseButtonEventArgs e)
         {
             if (!string.IsNullOrEmpty(_tag.OnlineLink))
                 Process.Start(new ProcessStartInfo(_tag.OnlineLink)
@@ -50,19 +65,22 @@ namespace Modesta.Views
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            var collections = _closetService.GetCollections(_currentUser.UserId);
-            if (collections.Count == 0)
+            var collectionId = CollectionCombo.SelectedValue;
+            if (collectionId == null)
             {
-                MessageBox.Show("Maak eerst een collectie aan in je kledingkast.", "Fout");
-                return;
+                var saved = _closetService.GetOrCreateSavedCollection(
+                    _currentUser.UserId);
+                collectionId = saved.CollectionId;
             }
+
             _closetService.AddItem(
                 _currentUser.UserId,
-                collections[0].CollectionId,
+                (int)collectionId,
                 _tag.Brand ?? _tag.ItemType,
                 _tag.ItemType,
                 "", _tag.Brand ?? "",
                 _tag.ProductPhotoPath ?? "", 0);
+
             MessageBox.Show("Item opgeslagen in je kledingkast!", "Gelukt");
             this.Close();
         }
