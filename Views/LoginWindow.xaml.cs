@@ -28,10 +28,11 @@ namespace Modesta.Views
                 {
                     MainAppWindow main = new MainAppWindow(user);
                     Application.Current.MainWindow = main;
-                    ThemeService.ApplyTheme(user.UITheme ?? "beige");
                     main.Show();
+                    main.OpenFeed(); // automatisch feed openen
                     this.Close();
                 }
+
                 else
                 {
                     this.Activate();

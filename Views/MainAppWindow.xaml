@@ -12,7 +12,7 @@
 
         <Border Grid.Column="0" Background="#FDFAF6"
                 BorderBrush="#E0D5C5" BorderThickness="0,0,1,0">
-            <StackPanel Margin="16">
+            <StackPanel x:Name="SidebarPanel" Margin="16">
                 <TextBlock Text="Modesta" FontSize="20" FontFamily="Georgia"
                            Foreground="#5C4A32" FontStyle="Italic"
                            Margin="0,16,0,32"/>

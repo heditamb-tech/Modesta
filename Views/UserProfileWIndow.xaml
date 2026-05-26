@@ -21,10 +21,9 @@
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.Column="0" Width="80" Height="80"
-                        CornerRadius="40" Background="#C4A882"
-                        Margin="0,0,16,0">
-                    <Image x:Name="ProfilePic"
-                           Stretch="UniformToFill"/>
+                        CornerRadius="40" ClipToBounds="True"
+                        Background="#C4A882" Margin="0,0,16,0">
+                    <Image x:Name="ProfilePic" Stretch="UniformToFill"/>
                 </Border>
 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">

@@ -1,8 +1,9 @@
 ﻿using Modesta.Models;
 using Modesta.Services;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
+using Microsoft.EntityFrameworkCore;
 
 namespace Modesta.Views
 {
@@ -17,6 +18,18 @@ namespace Modesta.Views
             InitializeComponent();
             _tag = tag;
             _currentUser = currentUser;
+
+            if (_tag.Post == null)
+            {
+                using (var db = new Modesta.Data.ModestDbContext())
+                {
+                    var fullTag = db.ItemTags
+                        .Include(t => t.Post)
+                        .FirstOrDefault(t => t.TagId == _tag.TagId);
+                    if (fullTag != null) _tag = fullTag;
+                }
+            }
+
             LoadInfo();
         }
 
@@ -41,18 +54,20 @@ namespace Modesta.Views
             else
                 LinkText.Visibility = Visibility.Collapsed;
 
-            // Laad collecties voor dropdown
+            // Zorg dat "Opgeslagen items" bestaat
+            _closetService.GetOrCreateSavedCollection(_currentUser.UserId);
+
             var collections = _closetService.GetCollections(_currentUser.UserId);
-            if (collections.Count == 0)
-            {
-                // Maak automatisch "Opgeslagen items" collectie aan
-                _closetService.GetOrCreateSavedCollection(_currentUser.UserId);
-                collections = _closetService.GetCollections(_currentUser.UserId);
-            }
             CollectionCombo.ItemsSource = collections;
             CollectionCombo.DisplayMemberPath = "Name";
             CollectionCombo.SelectedValuePath = "CollectionId";
-            CollectionCombo.SelectedIndex = 0;
+
+            // Selecteer standaard "Opgeslagen items"
+            var savedCol = collections.FirstOrDefault(c => c.Name == "Opgeslagen items");
+            if (savedCol != null)
+                CollectionCombo.SelectedValue = savedCol.CollectionId;
+            else
+                CollectionCombo.SelectedIndex = 0;
         }
 
         private void Link_Click(object sender,
@@ -68,9 +83,15 @@ namespace Modesta.Views
             var collectionId = CollectionCombo.SelectedValue;
             if (collectionId == null)
             {
-                var saved = _closetService.GetOrCreateSavedCollection(
-                    _currentUser.UserId);
+                var saved = _closetService.GetOrCreateSavedCollection(_currentUser.UserId);
                 collectionId = saved.CollectionId;
+            }
+
+            string photoPath = _tag.ProductPhotoPath ?? "";
+            if (string.IsNullOrEmpty(photoPath) && _tag.Post != null &&
+                !string.IsNullOrEmpty(_tag.Post.ImageUrl))
+            {
+                photoPath = _tag.Post.ImageUrl;
             }
 
             _closetService.AddItem(
@@ -79,7 +100,7 @@ namespace Modesta.Views
                 _tag.Brand ?? _tag.ItemType,
                 _tag.ItemType,
                 "", _tag.Brand ?? "",
-                _tag.ProductPhotoPath ?? "", 0);
+                photoPath, 0);
 
             MessageBox.Show("Item opgeslagen in je kledingkast!", "Gelukt");
             this.Close();

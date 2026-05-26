@@ -26,7 +26,12 @@ namespace Modesta.Views
         private void LoadItems()
         {
             ItemsSelector.Children.Clear();
-            var items = _closetService.GetItems(_currentUser.UserId);
+            var allItems = _closetService.GetItems(_currentUser.UserId);
+
+            // Filter items uit de "Outfit builder" collectie eruit
+            var items = allItems
+                .Where(i => i.Collection?.Name != "Outfit builder")
+                .ToList();
 
             if (items.Count == 0)
             {
@@ -34,12 +39,15 @@ namespace Modesta.Views
                 {
                     Text = "Voeg eerst items toe aan je kledingkast.",
                     FontSize = 12,
-                    Foreground = new SolidColorBrush(
-                        (Color)ColorConverter.ConvertFromString("#7A6B5A")),
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#7A6B5A")),
                     TextWrapping = TextWrapping.Wrap
                 });
                 return;
             }
+
+            // rest blijft hetzelfde
 
             ItemsSelector.Children.Add(new TextBlock
             {
@@ -325,7 +333,26 @@ namespace Modesta.Views
                 "Geef je outfit een naam:", "Outfit opslaan", "Mijn outfit");
 
             if (!string.IsNullOrEmpty(name))
-                MessageBox.Show($"Outfit '{name}' opgeslagen!", "Gelukt");
+            {
+                // Haal de "Outfit builder" collectie op of maak die aan
+                var outfitCol = _closetService.GetOrCreateOutfitBuilderCollection(
+                    _currentUser.UserId);
+
+                foreach (var item in _selectedItems.Values)
+                {
+                    _closetService.AddItem(
+                        _currentUser.UserId,
+                        outfitCol.CollectionId,
+                        $"{name} — {item.Name}",
+                        item.Category,
+                        item.Color,
+                        item.Brand,
+                        item.PhotoPath,
+                        item.Price);
+                }
+
+                MessageBox.Show($"Outfit '{name}' opgeslagen in je kledingkast!", "Gelukt");
+            }
         }
     }
 }

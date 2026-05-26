@@ -19,8 +19,22 @@ namespace Modesta.Views
         {
             InitializeComponent();
             _currentUser = user;
+            _closetService.GetOrCreateSavedCollection(_currentUser.UserId);
+            _closetService.GetOrCreateMyItemsCollection(_currentUser.UserId);
+            _closetService.GetOrCreateOutfitBuilderCollection(_currentUser.UserId);
             LoadCollections();
-            LoadItems();
+            // Toon standaard geen items — gebruiker moet eerst collectie kiezen
+            ItemsPanel.Children.Clear();
+            var hint = new System.Windows.Controls.TextBlock
+            {
+                Text = "Kies een collectie om je items te zien.",
+                FontSize = 13,
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#7A6B5A")),
+                Margin = new System.Windows.Thickness(8, 16, 0, 0)
+            };
+            ItemsPanel.Children.Add(hint);
         }
 
         private void LoadCollections()
@@ -106,7 +120,6 @@ namespace Modesta.Views
                     .ConvertFromString("#7A6B5A"))
             });
 
-            // Rij 1: Bewerk + Verwijder
             var btnPanel1 = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -179,7 +192,6 @@ namespace Modesta.Views
             btnPanel1.Children.Add(deleteBtn);
             stack.Children.Add(btnPanel1);
 
-            // Rij 2: + Collectie
             var addToColBtn = new Button
             {
                 Content = "+ Aan collectie toevoegen",
@@ -248,12 +260,6 @@ namespace Modesta.Views
 
         private void AddItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CollectionCombo.SelectedValue == null)
-            {
-                MessageBox.Show("Kies eerst een collectie.", "Fout");
-                return;
-            }
-
             var dialog = new OpenFileDialog();
             dialog.Filter = "Afbeeldingen|*.jpg;*.jpeg;*.png";
             if (dialog.ShowDialog() == true)
@@ -273,11 +279,16 @@ namespace Modesta.Views
 
                 if (!string.IsNullOrEmpty(nameDialog))
                 {
+                    // Automatisch in "Mijn items" collectie
+                    var myItems = _closetService.GetOrCreateMyItemsCollection(
+                        _currentUser.UserId);
+
                     _closetService.AddItem(
                         _currentUser.UserId,
-                        (int)CollectionCombo.SelectedValue,
+                        myItems.CollectionId,
                         nameDialog, category, "", "", dest, 0);
                     LoadItems();
+                    MessageBox.Show("Item toegevoegd aan 'Mijn items'!", "Gelukt");
                 }
             }
         }

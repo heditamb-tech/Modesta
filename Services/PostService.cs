@@ -60,13 +60,15 @@ namespace Modesta.Services
             using (var db = GetDb())
             {
                 var followingIds = db.Follows
-                    .Where(f => f.FollowerId == userId)
+                    .Where(f => f.FollowerId == userId && f.Status == "accepted")
                     .Select(f => f.FollowingId)
                     .ToList();
 
                 return db.Posts
                     .Where(p => followingIds.Contains(p.UserId) || p.UserId == userId)
+                    .Include(p => p.User)
                     .Include(p => p.ItemTags)
+                    .Include(p => p.Comments)
                     .OrderByDescending(p => p.CreatedAt)
                     .ToList();
             }
