@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modesta — Your Modesty. Your Choice.</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--beige:#F5EFE6;--beige-dark:#E8DDD0;--beige-deeper:#D4C4B0;--brown:#8B6F47;--brown-dark:#5C4A32;--brown-light:#C4A882;--white:#FDFAF6;--text:#3A2E22;--muted:#7A6B5A;--border:#E0D5C5;--bg:#FAF6F0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.75}
+nav{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:62px}
+.logo{font-size:1.3rem;color:var(--brown-dark);letter-spacing:.05em;font-style:italic;font-family:Georgia,serif}
+.nav-links{display:flex;gap:1.5rem;list-style:none}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:13px;transition:color .2s}
+.nav-links a:hover{color:var(--brown)}
+.hero{background:#E8DDD0;padding:5rem 2rem;text-align:center}
+.hero h1{font-size:3.8rem;font-weight:400;letter-spacing:.08em;margin-bottom:.4rem;font-style:italic;font-family:Georgia,serif;color:var(--brown-dark)}
+.hero-slogan{font-size:1rem;color:var(--muted);font-style:italic;margin-bottom:1.2rem}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:640px;margin:0 auto 2rem;font-weight:300}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.badge{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:5px 16px;font-size:12px;color:var(--brown-dark)}
+.url-box{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:10px 22px;display:inline-block;margin-top:1.5rem;font-family:monospace;font-size:13px;color:var(--brown)}
+section{max-width:1100px;margin:0 auto;padding:4rem 2rem}
+.label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--brown);margin-bottom:.6rem}
+h2{font-size:1.85rem;font-weight:400;margin-bottom:1rem;letter-spacing:.02em;font-style:italic;font-family:Georgia,serif}
+h3{font-size:1rem;font-weight:600;margin-bottom:.5rem;color:var(--brown-dark)}
+p{color:var(--muted);margin-bottom:1rem;font-size:.95rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:1.25rem;margin-top:1.5rem}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.4rem;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(139,111,71,.1)}
+.card.highlight{border:2px solid var(--brown-light)}
+.card-icon{font-size:1.8rem;margin-bottom:.75rem}
+.card h3{font-size:.93rem}
+.card p{font-size:13px;margin:0}
+.new-badge{display:inline-block;background:var(--brown);color:white;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;margin-bottom:8px}
+.infobox{background:var(--beige);border-left:4px solid var(--brown);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:13px;color:var(--muted)}
+.infobox strong{color:var(--brown-dark)}
+.feeds{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.25rem;margin-top:1.5rem}
+.feed-card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.feed-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--beige)}
+.feed-icon{font-size:1.3rem}
+.feed-title{font-size:.93rem;font-weight:600;color:var(--brown-dark);margin:0}
+.feed-sub{font-size:11px;color:var(--muted);margin:0}
+.feed-body{padding:1rem 1.25rem}
+.feed-body p{font-size:13px;margin:0}
+.privacy{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:1rem;margin-top:1.5rem}
+.pcard{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.25rem;text-align:center}
+.pcard .emoji{font-size:2rem;margin-bottom:.5rem}
+.pcard h3{font-size:.93rem}
+.pcard p{font-size:12px;margin:0}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-top:1.5rem}
+.tag-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;display:flex;align-items:center;gap:10px}
+.tag-item .ti{font-size:1.3rem}
+.tag-item p{font-size:13px;font-weight:500;color:var(--brown-dark);margin:0}
+.flow-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1rem;margin-top:1.5rem;counter-reset:step}
+.flow-step{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.25rem;position:relative}
+.flow-step::before{counter-increment:step;content:counter(step);position:absolute;top:-12px;left:16px;background:var(--brown);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.flow-step h3{font-size:.88rem;margin-bottom:.4rem;margin-top:.2rem}
+.flow-step p{font-size:12px;margin:0}
+.compare{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:13px}
+.compare th{background:var(--brown);color:white;padding:9px 13px;text-align:left;font-weight:600}
+.compare td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--muted)}
+.compare tr:last-child td{border-bottom:none}
+.compare td:first-child{font-weight:500;color:var(--brown-dark)}
+.compare td:last-child{background:#F5F2EE}
+.yes{color:#2D6A2D;font-weight:700}.no{color:#9B3A3A}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:1rem;margin-top:1.5rem}
+.tech-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.1rem;text-align:center}
+.tech-card .icon{font-size:1.7rem;margin-bottom:.4rem}
+.tech-card .name{font-size:12px;font-weight:700;color:var(--brown-dark);margin-bottom:.2rem}
+.tech-card .desc{font-size:11px;color:var(--muted)}
+.divider{border:none;border-top:1px solid var(--border);margin:0}
+footer{background:var(--brown-dark);color:rgba(255,255,255,.6);text-align:center;padding:2rem;font-size:13px}
+footer strong{color:white}
+@media(max-width:600px){.hero h1{font-size:2.4rem}.nav-links{display:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Modesta</div>
+    <ul class="nav-links">
+      <li><a href="#over">Over</a></li>
+      <li><a href="#builder">Outfit Builder</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#feeds">Feeds</a></li>
+      <li><a href="#privacy">Privacy</a></li>
+      <li><a href="#tech">Technologie</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Modesta</h1>
+  <p class="hero-slogan">Your Modesty. Your Choice.</p>
+  <p>Een desktop platform voor elke vrouw die bewust en bescheiden wil kleden. Beheer je eigen kledingkast, sla items op uit de feed, pas ze virtueel op een paspop en vind winkels met één klik.</p>
+  <div class="badges">
+    <span class="badge">C# Desktop App</span>
+    <span class="badge">Digitale Kledingkast</span>
+    <span class="badge">Virtuele Outfit Builder</span>
+    <span class="badge">Community Inspiratie</span>
+    <span class="badge">AI Styling</span>
+    <span class="badge">Inspiration Lab 2025</span>
+  </div>
+  <div class="url-box">https://github.com/heditamb-tech/Modesta</div>
+</div>
+
+<section id="over">
+  <div class="label">Het project</div>
+  <h2>Wat is Modesta?</h2>
+  <p>Vrouwen die bewust kiezen voor bescheiden kleding missen een centrale plek om hun garderobe te beheren, inspiratie te vinden en winkels te ontdekken. Bestaande platformen zijn te algemeen en bieden geen concrete winkeltips.</p>
+  <p>Modesta is een persoonlijk modebeheertool met een community-laag. Je ziet een item bij iemand in de feed, slaat het op in jouw kast, en past het virtueel op een paspop samen met andere opgeslagen items zodat je ziet of alles matcht voordat je iets koopt.</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🗄️</div>
+      <h3>Digitale kledingkast</h3>
+      <p>Jouw garderobe in onbeperkte, zelf gekozen collecties. Items opgeslagen vanuit de feed en eigen items die je zelf uploadt.</p>
+    </div>
+    <div class="card highlight">
+      <div class="new-badge">Unieke feature</div>
+      <div class="card-icon">🪆</div>
+      <h3>Virtuele outfit builder</h3>
+      <p>Sla items op uit andermans posts en pas ze virtueel op een paspop. Zien of ze matchen voor je ze koopt.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">👥</div>
+      <h3>Community inspiratie</h3>
+      <p>Posts van anderen met verplichte brontags. Elk item heeft een winkellink of adres zodat je het direct kan vinden.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <h3>AI-assistent</h3>
+      <p>Outfit-suggesties op basis van wat jij al in je kast hebt opgeslagen, via de Groq AI.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔒</div>
+      <h3>Security</h3>
+      <p>Alle data blijft lokaal op jouw toestel. Wachtwoorden worden gehasht met BCrypt zodat ze nooit leesbaar worden opgeslagen.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <h3>Admin-beheer</h3>
+      <p>Een apart admin-paneel voor gebruikersbeheer, het reviewen van rapporten en het bekijken van statistieken.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="builder">
+  <div class="label">Unieke feature</div>
+  <h2>Virtuele outfit builder</h2>
+  <p>Je spaart items op uit de feed van andere gebruikers en past ze virtueel samen op een paspop zodat je ziet of ze matchen voor je ze koopt.</p>
+  <div class="infobox"><strong>Het probleem dat dit oplost:</strong> Je koopt online een rok en een topje apart, ze komen thuis en ze matchen niet. Met de Modesta outfit builder pas je beide items virtueel voordat je bestelt. Geen verspild geld meer.</div>
+
+  <h3 style="margin-top:1.5rem;color:var(--brown)">Hoe het werkt</h3>
+  <div class="flow-steps">
+    <div class="flow-step"><h3>Item spotten</h3><p>Je ziet een topje bij iemand in de feed dat je mooi vindt.</p></div>
+    <div class="flow-step"><h3>Opslaan in kast</h3><p>Je klikt op de tag van het item en slaat het op in je kledingkast.</p></div>
+    <div class="flow-step"><h3>Meer spotten</h3><p>Je ziet later een rok bij iemand anders. Ook opgeslagen in je kast.</p></div>
+    <div class="flow-step"><h3>Builder openen</h3><p>Je opent de outfit builder en selecteert de items die je wil combineren.</p></div>
+    <div class="flow-step"><h3>Passen</h3><p>Beide items verschijnen op de paspop. Ze matchen goed en je klikt door naar de winkellinks.</p></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="features">
+  <div class="label">Functionaliteiten</div>
+  <h2>Features in detail</h2>
+
+  <h3 style="margin-top:1rem;color:var(--brown)">Wat kan je taggen in een post?</h3>
+  <p>Bij elke post vermeld je verplicht de bron van elk item, met een winkellink of adres.</p>
+  <div class="tag-grid">
+    <div class="tag-item"><span class="ti">👗</span><p>Kleding</p></div>
+    <div class="tag-item"><span class="ti">🧕</span><p>Hoofdbedekking</p></div>
+    <div class="tag-item"><span class="ti">👟</span><p>Schoenen</p></div>
+    <div class="tag-item"><span class="ti">👜</span><p>Tassen</p></div>
+    <div class="tag-item"><span class="ti">💍</span><p>Accessoires</p></div>
+  </div>
+
+  <h3 style="margin-top:2rem;color:var(--brown)">Kledingkast</h3>
+  <p>Je kledingkast bestaat uit drie automatische collecties en zelf aangemaakte collecties.</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">💾</div>
+      <h3>Opgeslagen items</h3>
+      <p>Items die je hebt opgeslagen via tags in andermans posts komen automatisch hier terecht.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📸</div>
+      <h3>Eigen items</h3>
+      <p>Foto's van kleren die je zelf uploadt. Zo kan je kledingstukken die je al hebt opslaan in je digitale kledingkast.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🪆</div>
+      <h3>Outfit builder</h3>
+      <p>Outfits die je hebt samengesteld en opgeslagen via de outfit builder.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📁</div>
+      <h3>Eigen collecties</h3>
+      <p>Maak zelf collecties aan zoals "Wishlist" of "School outfits". Items kan je aan meerdere collecties toevoegen.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:2rem;color:var(--brown)">AI-assistent</h3>
+  <p>De AI-stylist genereert outfit-suggesties op basis van jouw kledingkast. Stel een vraag zoals "Wat draag ik naar een bruiloft?" en de AI stelt een outfit samen uit jouw opgeslagen items.</p>
+</section>
+
+<hr class="divider">
+
+<section id="feeds">
+  <div class="label">Feeds</div>
+  <h2>Inspiratie vinden</h2>
+  <div class="feeds">
+    <div class="feed-card">
+      <div class="feed-header"><span class="feed-icon">🏠</span><div><p class="feed-title">Feed</p><p class="feed-sub">Alle posts, nieuwste eerst</p></div></div>
+      <div class="feed-body"><p>Alle posts van alle gebruikers, gesorteerd van nieuwste naar oudste. Klik op een tag om het item op te slaan in je kledingkast.</p></div>
+    </div>
+    <div class="feed-card">
+      <div class="feed-header"><span class="feed-icon">🔍</span><div><p class="feed-title">Zoeken</p><p class="feed-sub">Op basis van tekst</p></div></div>
+      <div class="feed-body"><p>Zoek op tekst, gebruikersnaam of merk. Vind snel wat je zoekt en sla items op vanuit de zoekresultaten.</p></div>
+    </div>
+    <div class="feed-card">
+      <div class="feed-header"><span class="feed-icon">🤖</span><div><p class="feed-title">Voor jou</p><p class="feed-sub">Gepersonaliseerd via AI</p></div></div>
+      <div class="feed-body"><p>Een gepersonaliseerde feed op basis van jouw kledingkast en stijlvoorkeur, aangestuurd door de AI.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="privacy">
+  <div class="label">Privacy en security</div>
+  <h2>Jouw data, jouw keuze</h2>
+  <p>Alle data wordt lokaal opgeslagen op jouw toestel. Er is geen externe server of cloud betrokken. Wachtwoorden worden gehasht met BCrypt zodat ze nooit in leesbare tekst worden opgeslagen.</p>
+  <div class="privacy">
+    <div class="pcard"><div class="emoji">🌍</div><h3>Publiek account</h3><p>Iedereen kan jouw posts zien en items opslaan uit jouw posts.</p></div>
+    <div class="pcard"><div class="emoji">👯</div><h3>Vrienden</h3><p>Alleen goedgekeurde volgers zien jouw posts.</p></div>
+    <div class="pcard"><div class="emoji">🔒</div><h3>Privé</h3><p>Alleen jijzelf ziet alles. Gebruik Modesta als persoonlijk garderobetool.</p></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section>
+  <div class="label">Vergelijking</div>
+  <h2>Waarom niet gewoon Instagram?</h2>
+  <table class="compare">
+    <tr><th>Feature</th><th>Instagram</th><th>Modesta</th></tr>
+    <tr><td>Bescheiden mode als focus</td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>Digitale eigen kledingkast</td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>Virtuele outfit builder met paspop</td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>Items opslaan uit andermans posts</td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>Verplichte brontags per item</td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>AI outfit-suggesties op basis van eigen kast</td><td class="no">✗</td><td class="yes">✓</td></tr>
+    <tr><td>Alle data lokaal op jouw toestel</td><td class="no">✗</td><td class="yes">✓</td></tr>
+  </table>
+</section>
+
+<hr class="divider">
+
+<section id="tech">
+  <div class="label">Technologie</div>
+  <h2>Technische stack</h2>
+  <div class="tech-grid">
+    <div class="tech-card"><div class="icon">🖥️</div><div class="name">C# WPF</div><div class="desc">Desktop UI voor Windows</div></div>
+    <div class="tech-card"><div class="icon">🗄️</div><div class="name">SQLite</div><div class="desc">Lokale database op het toestel</div></div>
+    <div class="tech-card"><div class="icon">⚙️</div><div class="name">Entity Framework</div><div class="desc">Data-toegang vanuit C#</div></div>
+    <div class="tech-card"><div class="icon">🤖</div><div class="name">Groq API</div><div class="desc">AI outfit-suggesties</div></div>
+    <div class="tech-card"><div class="icon">🔒</div><div class="name">BCrypt</div><div class="desc">Wachtwoord-beveiliging</div></div>
+    <div class="tech-card"><div class="icon">🌿</div><div class="name">Git & GitHub</div><div class="desc">Versiebeheer en samenwerking</div></div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Modesta</strong> &nbsp;&middot;&nbsp; Your Modesty. Your Choice.</p>
+</footer>
+
+</body>
+</html>
