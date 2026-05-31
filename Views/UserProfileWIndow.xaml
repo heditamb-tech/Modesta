@@ -31,21 +31,16 @@
                                FontWeight="Medium" Foreground="#3A2E22"/>
                     <TextBlock x:Name="BioText" FontSize="12"
                                Foreground="#7A6B5A" Margin="0,4,0,0"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <TextBlock x:Name="PostCountText" FontSize="12"
-                                   Foreground="#7A6B5A" Margin="0,0,16,0"/>
-                        <TextBlock x:Name="FollowerCountText" FontSize="12"
-                                   Foreground="#7A6B5A" Margin="0,0,16,0"/>
-                        <TextBlock x:Name="FollowingCountText" FontSize="12"
-                                   Foreground="#7A6B5A"/>
-                    </StackPanel>
+                    <TextBlock x:Name="PostCountText" FontSize="12"
+                               Foreground="#7A6B5A" Margin="0,8,0,0"/>
                 </StackPanel>
 
-                <Button x:Name="FollowBtn" Grid.Column="2"
-                        Height="40" Padding="20,0"
-                        Background="#8B6F47" Foreground="White"
-                        BorderThickness="0" FontSize="13"
-                        Cursor="Hand" Click="FollowBtn_Click"
+                <Button Grid.Column="2" Content="Rapporteer"
+                        Height="40" Padding="16,0"
+                        Background="Transparent" Foreground="#C0392B"
+                        BorderBrush="#C0392B" BorderThickness="1"
+                        FontSize="13" Cursor="Hand"
+                        Click="ReportUser_Click"
                         VerticalAlignment="Center"/>
             </Grid>
         </Border>

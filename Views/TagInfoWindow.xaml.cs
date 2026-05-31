@@ -54,7 +54,6 @@ namespace Modesta.Views
             else
                 LinkText.Visibility = Visibility.Collapsed;
 
-            // Zorg dat "Opgeslagen items" bestaat
             _closetService.GetOrCreateSavedCollection(_currentUser.UserId);
 
             var collections = _closetService.GetCollections(_currentUser.UserId);
@@ -62,7 +61,6 @@ namespace Modesta.Views
             CollectionCombo.DisplayMemberPath = "Name";
             CollectionCombo.SelectedValuePath = "CollectionId";
 
-            // Selecteer standaard "Opgeslagen items"
             var savedCol = collections.FirstOrDefault(c => c.Name == "Opgeslagen items");
             if (savedCol != null)
                 CollectionCombo.SelectedValue = savedCol.CollectionId;

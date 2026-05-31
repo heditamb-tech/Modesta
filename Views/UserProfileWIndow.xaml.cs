@@ -2,7 +2,6 @@
 using Modesta.Services;
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -14,8 +13,6 @@ namespace Modesta.Views
         private User _currentUser;
         private User _profileUser;
         private PostService _postService = new PostService();
-        private FollowService _followService = new FollowService();
-        private bool _isFollowing = false;
 
         public UserProfileWindow(User currentUser, User profileUser)
         {
@@ -38,31 +35,7 @@ namespace Modesta.Views
             }
 
             var posts = _postService.GetUserPosts(_profileUser.UserId);
-            var followers = _followService.GetFollowerCount(_profileUser.UserId);
-            var following = _followService.GetFollowingCount(_profileUser.UserId);
-
             PostCountText.Text = $"{posts.Count} posts";
-            FollowerCountText.Text = $"{followers} volgers";
-            FollowingCountText.Text = $"{following} volgend";
-
-            _isFollowing = _followService.IsFollowing(
-                _currentUser.UserId, _profileUser.UserId);
-            FollowBtn.Content = _isFollowing ? "Ontvolgen" : "Volgen";
-            FollowBtn.Background = _isFollowing ?
-                new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#F5EFE6")) :
-                new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#8B6F47"));
-            FollowBtn.Foreground = _isFollowing ?
-                new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#5C4A32")) :
-                System.Windows.Media.Brushes.White;
-
-            if (_currentUser.UserId == _profileUser.UserId)
-                FollowBtn.Visibility = Visibility.Collapsed;
 
             foreach (var post in posts)
             {
@@ -71,31 +44,15 @@ namespace Modesta.Views
             }
         }
 
-        private void FollowBtn_Click(object sender, RoutedEventArgs e)
+        private void ReportUser_Click(object sender, RoutedEventArgs e)
         {
-            if (_isFollowing)
-            {
-                _followService.Unfollow(_currentUser.UserId, _profileUser.UserId);
-                _isFollowing = false;
-                FollowBtn.Content = "Volgen";
-                FollowBtn.Background = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#8B6F47"));
-                FollowBtn.Foreground = System.Windows.Media.Brushes.White;
-            }
-            else
-            {
-                _followService.Follow(_currentUser.UserId, _profileUser.UserId,
-                    _profileUser.PrivacySetting ?? "public");
-                _isFollowing = true;
-                FollowBtn.Content = "Ontvolgen";
-                FollowBtn.Background = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#F5EFE6"));
-                FollowBtn.Foreground = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#5C4A32"));
-            }
+            var reason = Microsoft.VisualBasic.Interaction.InputBox(
+                "Waarom rapporteer je deze gebruiker?",
+                "Rapporteer gebruiker",
+                "Ongepast gedrag");
+
+            if (!string.IsNullOrEmpty(reason))
+                MessageBox.Show("Gebruiker gerapporteerd. De admin zal dit bekijken.", "Bedankt");
         }
 
         private Border CreatePostCard(Post post)

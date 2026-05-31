@@ -19,7 +19,7 @@
         <Border Grid.Row="1" Background="#FDF6E3" BorderBrush="#E8D5A0"
                 BorderThickness="1" CornerRadius="8"
                 Padding="12" Margin="0,0,0,16">
-            <TextBlock Text="Outfit suggesties op basis van jouw kledingkast."
+            <TextBlock Text="De AI gebruikt enkel categorieën en kleuren uit jouw kledingkast. Geen foto's of persoonlijke gegevens."
                        FontSize="11" Foreground="#633806" TextWrapping="Wrap"/>
         </Border>
 

@@ -67,17 +67,100 @@ namespace Modesta.Views
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
                     .ConvertFromString("#5C4A32")),
-                Margin = new Thickness(0, 0, 0, 16)
+                Margin = new Thickness(0, 0, 0, 20)
             });
 
-            var stats = new StackPanel { Orientation = Orientation.Horizontal };
-            stats.Children.Add(CreateStatCard("Gebruikers",
-                _adminService.GetUserCount().ToString()));
-            stats.Children.Add(CreateStatCard("Posts",
-                _adminService.GetPostCount().ToString()));
-            stats.Children.Add(CreateStatCard("Rapporten",
-                _adminService.GetPendingReportCount().ToString()));
+            var userCount = _adminService.GetUserCount();
+            var postCount = _adminService.GetPostCount();
+            var reportCount = _adminService.GetPendingReportCount();
+            var max = Math.Max(Math.Max(userCount, postCount), Math.Max(reportCount, 1));
+
+            // Stat cards
+            var stats = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 24) };
+            stats.Children.Add(CreateStatCard("Gebruikers", userCount.ToString()));
+            stats.Children.Add(CreateStatCard("Posts", postCount.ToString()));
+            stats.Children.Add(CreateStatCard("Rapporten", reportCount.ToString()));
             ContentPanel.Children.Add(stats);
+
+            // Grafiek titel
+            ContentPanel.Children.Add(new TextBlock
+            {
+                Text = "Overzicht",
+                FontSize = 14,
+                FontWeight = FontWeights.Medium,
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#3A2E22")),
+                Margin = new Thickness(0, 0, 0, 12)
+            });
+
+            // Balkjes
+            var chart = new StackPanel { Margin = new Thickness(0, 0, 0, 8) };
+            chart.Children.Add(CreateBar("Gebruikers", userCount, max, "#8B6F47"));
+            chart.Children.Add(CreateBar("Posts", postCount, max, "#C4A882"));
+            chart.Children.Add(CreateBar("Rapporten", reportCount, max, "#FAECE7"));
+            ContentPanel.Children.Add(chart);
+        }
+
+        private Border CreateBar(string label, int value, int max, string color)
+        {
+            var container = new Grid { Margin = new Thickness(0, 0, 0, 8) };
+            container.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+            container.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            container.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
+
+            var labelBlock = new TextBlock
+            {
+                Text = label,
+                FontSize = 12,
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#7A6B5A")),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetColumn(labelBlock, 0);
+
+            var barWidth = max == 0 ? 0 : (double)value / max;
+            var barContainer = new Border
+            {
+                Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#F5EFE6")),
+                Height = 28,
+                CornerRadius = new CornerRadius(4)
+            };
+
+            var bar = new Border
+            {
+                Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString(color)),
+                Height = 28,
+                CornerRadius = new CornerRadius(4),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = barWidth * 400
+            };
+            barContainer.Child = bar;
+            Grid.SetColumn(barContainer, 1);
+
+            var valueBlock = new TextBlock
+            {
+                Text = value.ToString(),
+                FontSize = 12,
+                FontWeight = FontWeights.Medium,
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#3A2E22")),
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            Grid.SetColumn(valueBlock, 2);
+
+            container.Children.Add(labelBlock);
+            container.Children.Add(barContainer);
+            container.Children.Add(valueBlock);
+
+            return new Border { Child = container, Margin = new Thickness(0, 0, 0, 4) };
         }
 
         private Border CreateStatCard(string label, string value)

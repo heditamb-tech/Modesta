@@ -60,14 +60,7 @@ namespace Modesta.Services
             {
                 using (var db = GetDb())
                 {
-                    
                     var user = db.Users.FirstOrDefault(u => u.Email == email);
-                    // Tijdelijk: maak eerste user admin
-                    if (user != null && user.UserId == 1)
-                    {
-                        user.IsAdmin = true;
-                        db.SaveChanges();
-                    }
                     if (user == null) return null;
                     if (!BC.Verify(password, user.PasswordHash)) return null;
                     return user;
@@ -79,6 +72,7 @@ namespace Modesta.Services
                 return null;
             }
         }
+
 
         public bool ChangePassword(int userId, string newPassword)
         {
@@ -98,6 +92,23 @@ namespace Modesta.Services
             {
                 var user = db.Users.Find(userId);
                 if (user == null) return false;
+
+                var posts = db.Posts.Where(p => p.UserId == userId).ToList();
+                db.Posts.RemoveRange(posts);
+
+                var items = db.ClothingItems.Where(i => i.UserId == userId).ToList();
+                db.ClothingItems.RemoveRange(items);
+
+                var collections = db.Collections.Where(c => c.UserId == userId).ToList();
+                db.Collections.RemoveRange(collections);
+
+                var follows = db.Follows.Where(f => f.FollowerId == userId ||
+                                                    f.FollowingId == userId).ToList();
+                db.Follows.RemoveRange(follows);
+
+                var reports = db.Reports.Where(r => r.ReporterId == userId).ToList();
+                db.Reports.RemoveRange(reports);
+
                 db.Users.Remove(user);
                 db.SaveChanges();
                 return true;

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Win32;
 using Modesta.Models;
 using Modesta.Services;
+using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Modesta.Views
@@ -29,16 +29,7 @@ namespace Modesta.Views
                 && File.Exists(_currentUser.ProfilePicturePath))
             {
                 ProfilePicture.Source = new BitmapImage(
-                    new System.Uri(_currentUser.ProfilePicturePath));
-            }
-
-            foreach (ComboBoxItem item in ThemeCombo.Items)
-            {
-                if (item.Tag.ToString() == (_currentUser.UITheme ?? "beige"))
-                {
-                    ThemeCombo.SelectedItem = item;
-                    break;
-                }
+                    new Uri(_currentUser.ProfilePicturePath));
             }
         }
 
@@ -56,7 +47,7 @@ namespace Modesta.Views
                 string dest = Path.Combine(folder, filename);
                 File.Copy(dialog.FileName, dest);
                 _newPhotoPath = dest;
-                ProfilePicture.Source = new BitmapImage(new System.Uri(dest));
+                ProfilePicture.Source = new BitmapImage(new Uri(dest));
             }
         }
 
@@ -71,20 +62,6 @@ namespace Modesta.Views
             if (!string.IsNullOrEmpty(NewPasswordBox.Password))
                 _userService.ChangePassword(
                     _currentUser.UserId, NewPasswordBox.Password);
-
-            var selectedTheme = (ThemeCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "beige";
-            _userService.UpdateProfile(_currentUser.UserId, BioBox.Text, _newPhotoPath, UsernameBox.Text);
-            // Update theme
-            using (var db = new Modesta.Data.ModestDbContext())
-            {
-                var user = db.Users.Find(_currentUser.UserId);
-                if (user != null)
-                {
-                    user.UITheme = selectedTheme;
-                    db.SaveChanges();
-                }
-            }
-            ThemeService.ApplyTheme(selectedTheme);
 
             MessageBox.Show("Profiel opgeslagen!", "Gelukt");
         }

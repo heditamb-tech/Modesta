@@ -23,7 +23,6 @@ namespace Modesta.Views
             _closetService.GetOrCreateMyItemsCollection(_currentUser.UserId);
             _closetService.GetOrCreateOutfitBuilderCollection(_currentUser.UserId);
             LoadCollections();
-            // Toon standaard geen items — gebruiker moet eerst collectie kiezen
             ItemsPanel.Children.Clear();
             var hint = new System.Windows.Controls.TextBlock
             {
@@ -279,7 +278,6 @@ namespace Modesta.Views
 
                 if (!string.IsNullOrEmpty(nameDialog))
                 {
-                    // Automatisch in "Mijn items" collectie
                     var myItems = _closetService.GetOrCreateMyItemsCollection(
                         _currentUser.UserId);
 

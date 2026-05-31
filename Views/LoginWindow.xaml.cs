@@ -29,7 +29,7 @@ namespace Modesta.Views
                     MainAppWindow main = new MainAppWindow(user);
                     Application.Current.MainWindow = main;
                     main.Show();
-                    main.OpenFeed(); // automatisch feed openen
+                   
                     this.Close();
                 }
 

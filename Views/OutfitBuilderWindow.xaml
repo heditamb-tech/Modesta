@@ -20,7 +20,6 @@
                    FontFamily="Georgia" Foreground="#5C4A32"
                    FontStyle="Italic" Margin="0,0,0,16"/>
 
-        <!-- Paspop links -->
         <Border Grid.Row="1" Grid.Column="0"
                 Background="#FDFAF6" BorderBrush="#E0D5C5"
                 BorderThickness="1" CornerRadius="12"
@@ -33,30 +32,24 @@
                            Margin="0,0,0,16"/>
                 <Canvas x:Name="MannequinCanvas"
                         Width="200" Height="400">
-                    <!-- Hoofd -->
                     <Ellipse Canvas.Left="75" Canvas.Top="0"
                              Width="50" Height="50"
                              Fill="#D4A574"/>
-                    <!-- Nek -->
                     <Rectangle Canvas.Left="90" Canvas.Top="50"
                                Width="20" Height="20"
                                Fill="#D4A574"/>
-                    <!-- Hijab layer -->
                     <Ellipse x:Name="HijabLayer"
                              Canvas.Left="55" Canvas.Top="5"
                              Width="90" Height="70"
                              Fill="#C4A882" Visibility="Collapsed"/>
-                    <!-- Lichaam -->
                     <Rectangle x:Name="TopLayer"
                                Canvas.Left="50" Canvas.Top="70"
                                Width="100" Height="90"
                                Fill="#E8DDD0" RadiusX="4" RadiusY="4"/>
-                    <!-- Rok/broek -->
                     <Rectangle x:Name="BottomLayer"
                                Canvas.Left="50" Canvas.Top="160"
                                Width="100" Height="120"
                                Fill="#E8DDD0" RadiusX="4" RadiusY="4"/>
-                    <!-- Schoenen -->
                     <Rectangle x:Name="ShoesLayer"
                                Canvas.Left="50" Canvas.Top="280"
                                Width="44" Height="20"
@@ -65,7 +58,6 @@
                                Canvas.Left="106" Canvas.Top="280"
                                Width="44" Height="20"
                                Fill="#D4C4B0" RadiusX="4" RadiusY="4"/>
-                    <!-- Tas -->
                     <Rectangle x:Name="BagLayer"
                                Canvas.Left="160" Canvas.Top="120"
                                Width="40" Height="40"
@@ -75,7 +67,6 @@
             </StackPanel>
         </Border>
 
-        <!-- Items rechts -->
         <Border Grid.Row="1" Grid.Column="1"
                 Background="#FDFAF6" BorderBrush="#E0D5C5"
                 BorderThickness="1" CornerRadius="12"
@@ -85,12 +76,21 @@
             </ScrollViewer>
         </Border>
 
-        <!-- Opslaan knop -->
-        <Button Grid.Row="2" Grid.ColumnSpan="2"
-                Content="Outfit opslaan" Height="42"
-                Background="#8B6F47" Foreground="White"
-                BorderThickness="0" FontSize="13"
-                Cursor="Hand" Click="SaveOutfit_Click"
-                Margin="0,16,0,0"/>
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" 
+            Orientation="Horizontal" Margin="0,16,0,0">
+            <Button Content="Reset paspop" Height="42"
+            Background="Transparent" Foreground="#8B6F47"
+            BorderBrush="#8B6F47" BorderThickness="1" FontSize="13"
+            Cursor="Hand" Click="Reset_Click"
+            Margin="0,0,8,0" Padding="16,0"/>
+            <Button Content="Outfit opslaan" Height="42"
+            Background="#8B6F47" Foreground="White"
+            BorderThickness="0" FontSize="13"
+            Cursor="Hand" Click="SaveOutfit_Click"
+            Width="300"/>
+        </StackPanel>
+
     </Grid>
 </Window>
+    
+    

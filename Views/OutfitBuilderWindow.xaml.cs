@@ -28,7 +28,6 @@ namespace Modesta.Views
             ItemsSelector.Children.Clear();
             var allItems = _closetService.GetItems(_currentUser.UserId);
 
-            // Filter items uit de "Outfit builder" collectie eruit
             var items = allItems
                 .Where(i => i.Collection?.Name != "Outfit builder")
                 .ToList();
@@ -39,15 +38,12 @@ namespace Modesta.Views
                 {
                     Text = "Voeg eerst items toe aan je kledingkast.",
                     FontSize = 12,
-                    Foreground = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                        .ConvertFromString("#7A6B5A")),
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#7A6B5A")),
                     TextWrapping = TextWrapping.Wrap
                 });
                 return;
             }
-
-            // rest blijft hetzelfde
 
             ItemsSelector.Children.Add(new TextBlock
             {
@@ -149,6 +145,21 @@ namespace Modesta.Views
                 itemRow.MouseLeftButtonUp += (s, e) =>
                 {
                     var layerKey = GetLayerKey(capturedItem.Category ?? "");
+
+                    // Vraag altijd aan gebruiker op welk lichaamsdeel
+                    var choice = Microsoft.VisualBasic.Interaction.InputBox(
+                        $"'{capturedItem.Name}' plaatsen op:\n\n1. Hoofd / Hijab\n2. Bovenlichaam\n3. Onderlichaam\n4. Schoenen\n5. Tas",
+                        "Kies lichaamsdeel", "2");
+
+                    switch (choice.Trim())
+                    {
+                        case "1": layerKey = "hijab"; break;
+                        case "2": layerKey = "top"; break;
+                        case "3": layerKey = "bottom"; break;
+                        case "4": layerKey = "shoes"; break;
+                        case "5": layerKey = "bag"; break;
+                        default: return; // Annuleren
+                    }
 
                     if (_selectedItems.ContainsKey(layerKey) &&
                         _selectedItems[layerKey].ItemId == capturedItem.ItemId)
@@ -321,6 +332,28 @@ namespace Modesta.Views
             }
         }
 
+        private void Reset_Click(object sender, RoutedEventArgs e)
+        {
+            _selectedItems.Clear();
+            ResetLayer("hijab");
+            ResetLayer("top");
+            ResetLayer("bottom");
+            ResetLayer("shoes");
+            ResetLayer("bag");
+
+            foreach (var child in ItemsSelector.Children)
+            {
+                if (child is Border b)
+                {
+                    b.Background = Brushes.Transparent;
+                    if (b.Child is Grid g)
+                        foreach (var c in g.Children)
+                            if (c is TextBlock tb && tb.FontSize == 14)
+                                tb.Text = "";
+                }
+            }
+        }
+
         private void SaveOutfit_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedItems.Count == 0)
@@ -334,7 +367,6 @@ namespace Modesta.Views
 
             if (!string.IsNullOrEmpty(name))
             {
-                // Haal de "Outfit builder" collectie op of maak die aan
                 var outfitCol = _closetService.GetOrCreateOutfitBuilderCollection(
                     _currentUser.UserId);
 

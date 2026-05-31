@@ -16,7 +16,6 @@
                    Foreground="#5C4A32" FontStyle="Italic"
                    Margin="0,0,0,16"/>
 
-        <!-- Collecties balk -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16">
             <ComboBox x:Name="CollectionCombo" Width="200" Height="36"
                       Margin="0,0,12,0" SelectionChanged="CollectionCombo_Changed"/>
@@ -35,7 +34,6 @@
                     Click="AddItem_Click"/>
             </StackPanel>
 
-        <!-- Items grid -->
         <ScrollViewer Grid.Row="2">
             <WrapPanel x:Name="ItemsPanel"/>
         </ScrollViewer>
