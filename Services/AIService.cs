@@ -13,7 +13,7 @@ namespace Modesta.Services
     public class AIService
     {
         private static string _connString = @"Data Source=C:\Users\Heidi\modesta.db";
-        private static string _apiKey = "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";
+        private static string _apiKey = "";
         private readonly HttpClient _httpClient = new HttpClient();
 
         private Modesta.Data.ModestDbContext GetDb()
